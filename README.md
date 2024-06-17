@@ -19,6 +19,8 @@ Reverse Engineering Physical Semantics of PLC Program Variables Using Control In
 2. Hardware PLC is developed based on the OpenOPC for Python Library Module. 
 
 	The interface of reading/writing PLC memory is defined as an Opc *class*. 
+
+		import ./hardware_interface/.Opc
 		
 
 
