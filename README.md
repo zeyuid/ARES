@@ -6,11 +6,15 @@ Reverse Engineering Physical Semantics of PLC Program Variables Using Control In
 1. Software PLC: develop based on the Awlsim - S7 compatible Programmable Logic Controller 
 	https://github.com/mbuesch/awlsim
 
+	Add the xxx to 
+
 2. Hardware PLC: 
 
 python ./data_segmentation/segmenting_utils.py
 
 ## Obtain the Gcode
+	cd ./STL_Parser
+	python -m core.main
 
 python ./data_segmentation/segmenting_utils.py
 
