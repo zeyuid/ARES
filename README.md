@@ -20,11 +20,12 @@ Reverse Engineering Physical Semantics of PLC Program Variables Using Control In
 
 	The interface of reading/writing PLC memory is defined as an Opc *class*. 
 
-		import ./hardware_interface/.Opc
+		import ./hardware_interface/Opc
 		
-
-
 ## Obtain the Gcode
+
+	Taking the PLC IL program as input, the developed parser generates the dependencies between input and output variables. 
+
 	cd ./STL_Parser
 	python -m core.main
 
@@ -45,3 +46,11 @@ python ./data_segmentation/segmenting_utils.py
 ## Respond semantic attacks
 
 The response to semantic attacks utilizes the "Force" function of industrial communication protocols. However, the "Force" function may also be utilized by adversaries and further threaten the real critical infrastructure. For the legal and ethical considerations, the exploitation of "Force" function for Siemens PLC and Rockwell PLC will be published when the authentication weakness is fixed. 
+
+
+
+## Usages 
+
+examples of reverse-engineering physical semantics
+
+examples of detecting attacks
