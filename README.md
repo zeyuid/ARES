@@ -4,9 +4,17 @@ Reverse Engineering Physical Semantics of PLC Program Variables Using Control In
 
 ## Prepare the PLC-Twin
 1. Software PLC is developed based on [Awlsim - S7 compatible Programmable Logic Controller](https://github.com/mbuesch/awlsim).
-	The modifications include: 
-	1). Add the xxx to 
 
+	The modifications include: 
+	1). Supplement a Process mimicking module (i.e., Process_mimic), which should be stored at the root. 
+	2). Revise the "awlsimhw_debug" module, to support the online attack detection. 
+	3). Supplement an interface of PLC simulation, to support the quick rebooting of the PLC execution, i.e., Elevator_300project.awlpro. 
+
+		Usages:
+		cd ./awlsim
+		python awlsim-server Elevator_300project.awlpro
+		python awlsim-client -r RUN  
+		python awlsim-client -r Stop 
 
 2. Hardware PLC: 
 

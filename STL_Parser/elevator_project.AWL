@@ -454,23 +454,50 @@ TITLE =
 
       AN    I      0.7; 
       AN    I      2.1; 
+      =     M      3.3; 
+      =     M      3.4; 
+NETWORK
+TITLE =
+// L (19/20/21) (= (6,7)*3), substitute the timer 
+      A(    ; 
+      A     M      3.4; 
+      JNB   _001; 
+      L     1; 
+      L     MW   166; 
+      +I    ; 
+      T     MW   166; 
+      AN    OV; 
+      SAVE  ; 
+      CLR   ; 
+_001: A     BR; 
+      )     ; 
+      A(    ; 
+      L     MW   166; 
+      L     21; 
+      >=I   ; 
+      )     ; 
+      R     M      3.4; 
+      S     M      3.5; 
+NETWORK
+TITLE =
+
+      O     I      0.7; 
+      O     I      2.1; 
       =     L      0.0; 
       A     L      0.0; 
       BLD   102; 
-      =     M      3.3; 
+      R     M      3.5; 
       A     L      0.0; 
-      L     S5T#3S; 
-      SD    T     39; 
-      NOP   0; 
-      NOP   0; 
-      NOP   0; 
-      NOP   0; 
+      JNB   _002; 
+      L     0; 
+      T     MW   166; 
+_002: NOP   0; 
 NETWORK
 TITLE =
 
       A(    ; 
       O     I      1.0; 
-      O     T     39; 
+      O     M      3.5; 
       O     Q      1.2; 
       )     ; 
       A     I      2.2; 
@@ -577,6 +604,52 @@ VAR_TEMP
   TEMP9 : DATE_AND_TIME ;	
 END_VAR
 BEGIN
+NETWORK
+TITLE =
+      A     I      3.7
+      =     L     20.0
+      A     L     20.0
+      BLD   102
+      R     M 8.0
+      A     L     20.0
+      BLD   102
+      R     M 8.1
+      A     L     20.0
+      BLD   102
+      R     M 8.2
+      A     L     20.0
+      BLD   102
+      R     M 8.3
+      A     L     20.0
+      JNB   _004
+      L     0
+      T     QD     0
+_004: NOP   0
+      A     L     20.0
+      JNB   _005
+      L     0
+      T     MD     0
+_005: NOP   0
+      A     L     20.0
+      JNB   _006
+      L     0
+      T     MD     4
+_006: NOP   0
+      A     L     20.0
+      JNB   _007
+      L     0
+      T     MD     8
+_007: NOP   0
+      A     L     20.0
+      JNB   _008
+      L     0
+      T     MD    12
+_008: NOP   0
+      A     L     20.0
+      JNB   _009
+      L     0
+      T     MD    16
+_009: NOP   0
 NETWORK
 TITLE =
 
