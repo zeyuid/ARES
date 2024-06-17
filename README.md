@@ -23,10 +23,10 @@ Reverse Engineering Physical Semantics of PLC Program Variables Using Control In
 		import ./hardware_interface/Opc
 		
 ## Obtain the Gcode
-Taking the PLC IL program as input, the developed parser generates the dependencies between input and output variables. 
+Taking the PLC IL program as input, the developed parser generates the dependencies between input and output variables. <br>
 
-		cd ./STL_Parser
-		python -m core.main
+	cd ./STL_Parser
+	python -m core.main
 
 python ./data_segmentation/segmenting_utils.py
 
