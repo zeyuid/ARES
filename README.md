@@ -3,10 +3,10 @@ Reverse Engineering Physical Semantics of PLC Program Variables Using Control In
 
 
 ## Prepare the PLC-Twin
-1. Software PLC: develop based on the Awlsim - S7 compatible Programmable Logic Controller 
-	https://github.com/mbuesch/awlsim
+1. Software PLC is developed based on [Awlsim - S7 compatible Programmable Logic Controller](https://github.com/mbuesch/awlsim).
+	The modifications include: 
+	1). Add the xxx to 
 
-	Add the xxx to 
 
 2. Hardware PLC: 
 
