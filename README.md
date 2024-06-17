@@ -16,9 +16,11 @@ Reverse Engineering Physical Semantics of PLC Program Variables Using Control In
 		python awlsim-client -r RUN  
 		python awlsim-client -r Stop 
 
-2. Hardware PLC: 
+2. Hardware PLC is developed based on the OpenOPC for Python Library Module. 
 
-python ./data_segmentation/segmenting_utils.py
+	The interface of reading/writing PLC memory is defined as an Opc *class*. 
+		
+
 
 ## Obtain the Gcode
 	cd ./STL_Parser
