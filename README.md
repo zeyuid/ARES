@@ -28,26 +28,29 @@ Taking the PLC IL program as input, the developed parser generates the dependenc
 	cd ./STL_Parser
 	python -m core.main
 
-## Obtain the Gdata
+## Obtain the Gdata <br>
+
+With the historical SCADA data, the developed graph construction generates causalities between sensor readings and control commands
 
 python ./data_segmentation/segmenting_utils.py
 
-## Obtain the Gcross
+## Obtain the Gcross <br>
 
 python ./data_segmentation/segmenting_utils.py
 
-## Detect semantic attacks
+## Detect semantic attacks <br>
 
 python ./data_segmentation/segmenting_utils.py
 
-## Respond semantic attacks
+## Respond semantic attacks <br>
 
 The response to semantic attacks utilizes the "Force" function of industrial communication protocols. However, the "Force" function may also be utilized by adversaries and further threaten the real critical infrastructure. For the legal and ethical considerations, the exploitation of "Force" function for Siemens PLC and Rockwell PLC will be published when the authentication weakness is fixed. 
 
 
 
-## Usages 
+## Usages <br>
 
-examples of reverse-engineering physical semantics
+Example #1: reverse-engineering physical semantics
 
-examples of detecting attacks
+Example #2: detecting attacks
+
