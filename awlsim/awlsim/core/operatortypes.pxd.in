@@ -1,0 +1,141 @@
+from awlsim.common.cython_support cimport *
+
+cdef class __AwlOperatorTypesClass(object):
+	cdef public uint32_t _IMM_START
+	cdef public uint32_t IMM
+	cdef public uint32_t IMM_REAL
+	cdef public uint32_t IMM_S5T
+	cdef public uint32_t IMM_TIME
+	cdef public uint32_t IMM_DATE
+	cdef public uint32_t IMM_TOD
+	cdef public uint32_t IMM_DT
+	cdef public uint32_t IMM_PTR
+	cdef public uint32_t IMM_STR
+	cdef public uint32_t _IMM_END
+
+	cdef public uint32_t MEM_E
+	cdef public uint32_t MEM_A
+	cdef public uint32_t MEM_M
+	cdef public uint32_t MEM_L
+	cdef public uint32_t MEM_VL
+	cdef public uint32_t MEM_DB
+	cdef public uint32_t MEM_DI
+	cdef public uint32_t MEM_T
+	cdef public uint32_t MEM_Z
+	cdef public uint32_t MEM_PA
+	cdef public uint32_t MEM_PE
+
+	cdef public uint32_t MEM_STW
+	cdef public uint32_t MEM_STW_Z
+	cdef public uint32_t MEM_STW_NZ
+	cdef public uint32_t MEM_STW_POS
+	cdef public uint32_t MEM_STW_NEG
+	cdef public uint32_t MEM_STW_POSZ
+	cdef public uint32_t MEM_STW_NEGZ
+	cdef public uint32_t MEM_STW_UO
+
+	cdef public uint32_t MEM_DBLG
+	cdef public uint32_t MEM_DBNO
+	cdef public uint32_t MEM_DILG
+	cdef public uint32_t MEM_DINO
+
+	cdef public uint32_t MEM_AR2
+
+	cdef public uint32_t BLKREF_FC
+	cdef public uint32_t BLKREF_SFC
+	cdef public uint32_t BLKREF_FB
+	cdef public uint32_t BLKREF_SFB
+	cdef public uint32_t BLKREF_UDT
+	cdef public uint32_t BLKREF_DB
+	cdef public uint32_t BLKREF_DI
+	cdef public uint32_t BLKREF_OB
+	cdef public uint32_t BLKREF_VAT
+	cdef public uint32_t MULTI_FB
+	cdef public uint32_t MULTI_SFB
+
+	cdef public uint32_t LBL_REF
+	cdef public uint32_t SYMBOLIC
+	cdef public uint32_t NAMED_LOCAL
+	cdef public uint32_t NAMED_LOCAL_PTR
+	cdef public uint32_t NAMED_DBVAR
+
+	cdef public uint32_t INDIRECT
+	cdef public uint32_t UNSPEC
+
+	cdef public uint32_t VIRT_ACCU
+	cdef public uint32_t VIRT_AR	
+	cdef public uint32_t VIRT_DBR
+
+	cdef public dict type2str
+
+cdef public __AwlOperatorTypesClass AwlOperatorTypes
+
+
+cdef inline uint32_t makeAwlOperatorWidthMask(uint32_t width):
+	return (1u << (width // 8u)) if (width <= 32u) else 0x10000u
+
+cdef class __AwlOperatorWidthsClass(object):
+	cdef public uint32_t WIDTH_MASK_1
+	cdef public uint32_t WIDTH_MASK_8
+	cdef public uint32_t WIDTH_MASK_16
+	cdef public uint32_t WIDTH_MASK_24
+	cdef public uint32_t WIDTH_MASK_32
+	cdef public uint32_t WIDTH_MASK_COMP
+
+	cdef public uint32_t WIDTH_MASK_8_16_32
+	cdef public uint32_t WIDTH_MASK_SCALAR
+	cdef public uint32_t WIDTH_MASK_ALL
+
+cdef public __AwlOperatorWidthsClass AwlOperatorWidths
+
+
+cdef class __AwlIndirectOpConstClass(object):
+	cdef public uint32_t AR_NONE
+	cdef public uint32_t AR_1
+	cdef public uint32_t AR_2
+
+	cdef public uint32_t AREA_SHIFT
+	cdef public uint64_t AREA_MASK
+	cdef public uint64_t AREA_MASK_S
+
+	cdef public uint64_t AREA_NONE
+	cdef public uint64_t AREA_P
+	cdef public uint64_t AREA_E
+	cdef public uint64_t AREA_A
+	cdef public uint64_t AREA_M
+	cdef public uint64_t AREA_DB
+	cdef public uint64_t AREA_DI
+	cdef public uint64_t AREA_L
+	cdef public uint64_t AREA_VL
+
+	cdef public uint64_t AREA_NONE_S
+	cdef public uint64_t AREA_P_S
+	cdef public uint64_t AREA_E_S
+	cdef public uint64_t AREA_A_S
+	cdef public uint64_t AREA_M_S
+	cdef public uint64_t AREA_DB_S
+	cdef public uint64_t AREA_DI_S
+	cdef public uint64_t AREA_L_S
+	cdef public uint64_t AREA_VL_S
+
+	cdef public uint64_t EXT_AREA_MASK
+	cdef public uint64_t EXT_AREA_MASK_S
+
+	cdef public uint64_t EXT_AREA_T
+	cdef public uint64_t EXT_AREA_Z
+	cdef public uint64_t EXT_AREA_BLKREF_DB
+	cdef public uint64_t EXT_AREA_BLKREF_DI
+	cdef public uint64_t EXT_AREA_BLKREF_FB
+	cdef public uint64_t EXT_AREA_BLKREF_FC
+
+	cdef public uint64_t EXT_AREA_T_S
+	cdef public uint64_t EXT_AREA_Z_S
+	cdef public uint64_t EXT_AREA_BLKREF_DB_S
+	cdef public uint64_t EXT_AREA_BLKREF_DI_S
+	cdef public uint64_t EXT_AREA_BLKREF_FB_S
+	cdef public uint64_t EXT_AREA_BLKREF_FC_S
+
+	cdef int32_t area2optype(self, uint64_t area, _Bool store)
+	cdef int64_t optype2area(self, uint32_t operType)
+
+cdef public __AwlIndirectOpConstClass AwlIndirectOpConst

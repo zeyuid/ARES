@@ -1,0 +1,666 @@
+FUNCTION FC 2 : VOID
+VERSION : 0.1
+
+BEGIN
+NETWORK
+TITLE =
+
+      A(    ; 
+      O     Q      2.1; 
+      O     I      1.1; 
+      )     ; 
+      A(    ; 
+      O     I      2.4; 
+      O     I      3.0; 
+      )     ; 
+      =     M     20.0; 
+NETWORK
+TITLE =
+
+      A(    ; 
+      A(    ; 
+      O     M      1.0; 
+      O     ; 
+      A     M      2.0; 
+      AN    Q      2.1; 
+      AN    Q      1.3; 
+      AN    Q      1.4; 
+      )     ; 
+      A     Q      2.2; 
+      O     I      1.2; 
+      )     ; 
+      A(    ; 
+      O     I      2.5; 
+      O     I      3.1; 
+      )     ; 
+      =     M     21.0; 
+NETWORK
+TITLE =
+
+      A(    ; 
+      A(    ; 
+      O     M      1.0; 
+      O     ; 
+      A     M      2.0; 
+      AN    Q      2.1; 
+      AN    Q      2.3; 
+      AN    Q      1.3; 
+      AN    Q      1.5; 
+      AN    Q      1.4; 
+      )     ; 
+      A     Q      2.4; 
+      O     I      1.4; 
+      )     ; 
+      A(    ; 
+      O     I      2.6; 
+      O     I      3.2; 
+      )     ; 
+      =     M     22.0; 
+NETWORK
+TITLE =
+
+      A(    ; 
+      A(    ; 
+      O     M      2.0; 
+      O     ; 
+      A     M      1.0; 
+      AN    Q      2.5; 
+      AN    Q      2.4; 
+      AN    Q      1.5; 
+      AN    Q      2.6; 
+      AN    Q      1.6; 
+      )     ; 
+      A     Q      2.3; 
+      O     I      1.3; 
+      )     ; 
+      A(    ; 
+      O     I      2.5; 
+      O     I      3.1; 
+      )     ; 
+      =     M     20.3; 
+NETWORK
+TITLE =
+
+      A(    ; 
+      A(    ; 
+      O     M      2.0; 
+      O     ; 
+      A     M      1.0; 
+      AN    Q      2.3; 
+      AN    Q      2.6; 
+      AN    Q      1.6; 
+      )     ; 
+      A     Q      2.5; 
+      O     I      1.5; 
+      )     ; 
+      A(    ; 
+      O     I      2.6; 
+      O     I      3.2; 
+      )     ; 
+      =     M     20.4; 
+NETWORK
+TITLE =
+
+      A(    ; 
+      O     Q      2.6; 
+      O     I      1.6; 
+      )     ; 
+      A(    ; 
+      O     I      2.7; 
+      O     I      3.3; 
+      )     ; 
+      =     M     20.5; 
+NETWORK
+TITLE =
+
+      A     Q      1.3; 
+      A(    ; 
+      O     I      2.4; 
+      O     I      3.0; 
+      )     ; 
+      =     M     10.0; 
+NETWORK
+TITLE =
+
+      A     Q      1.4; 
+      A(    ; 
+      O     I      2.5; 
+      O     I      3.1; 
+      )     ; 
+      =     M     11.0; 
+NETWORK
+TITLE =
+
+      A     Q      1.5; 
+      A(    ; 
+      O     I      2.6; 
+      O     I      3.2; 
+      )     ; 
+      =     M     12.0; 
+NETWORK
+TITLE =
+
+      A     Q      1.6; 
+      A(    ; 
+      O     I      2.7; 
+      O     I      3.3; 
+      )     ; 
+      =     M     13.0; 
+NETWORK
+TITLE =
+
+      A(    ; 
+      O     I      2.4; 
+      O     I      2.5; 
+      O     I      2.6; 
+      O     I      2.7; 
+      )     ; 
+      A     I      0.7; 
+      =     M     24.0; 
+NETWORK
+TITLE =
+
+      A(    ; 
+      A     I      1.1; 
+      AN    I      2.4; 
+      O     Q      2.1; 
+      )     ; 
+      AN    M     20.0; 
+      =     Q      2.1; 
+NETWORK
+TITLE =
+
+      A(    ; 
+      A     I      1.3; 
+      AN    I      2.5; 
+      O     Q      2.3; 
+      )     ; 
+      A(    ; 
+      ON    M     20.3; 
+      O     M      1.0; 
+      )     ; 
+      =     Q      2.3; 
+NETWORK
+TITLE =
+
+      A(    ; 
+      A     I      1.2; 
+      AN    I      2.5; 
+      O     Q      2.2; 
+      )     ; 
+      A(    ; 
+      ON    M     21.0; 
+      O     M      2.0; 
+      )     ; 
+      =     Q      2.2; 
+NETWORK
+TITLE =
+
+      A(    ; 
+      A     I      1.4; 
+      AN    I      2.6; 
+      O     Q      2.4; 
+      )     ; 
+      A(    ; 
+      ON    M     22.0; 
+      O     M      2.0; 
+      )     ; 
+      =     Q      2.4; 
+NETWORK
+TITLE =
+
+      A(    ; 
+      A     I      1.5; 
+      AN    I      2.6; 
+      O     Q      2.5; 
+      )     ; 
+      A(    ; 
+      ON    M     20.4; 
+      O     M      1.0; 
+      )     ; 
+      =     Q      2.5; 
+NETWORK
+TITLE =
+
+      A(    ; 
+      A     I      1.6; 
+      AN    I      2.7; 
+      O     Q      2.6; 
+      )     ; 
+      AN    M     20.5; 
+      =     Q      2.6; 
+NETWORK
+TITLE =
+
+      A(    ; 
+      A     I      0.3; 
+      AN    I      2.4; 
+      O     Q      1.3; 
+      )     ; 
+      AN    M     10.0; 
+      =     Q      1.3; 
+NETWORK
+TITLE =
+
+      A(    ; 
+      A     I      0.4; 
+      AN    I      2.5; 
+      O     Q      1.4; 
+      )     ; 
+      AN    M     11.0; 
+      =     Q      1.4; 
+NETWORK
+TITLE =
+
+      A(    ; 
+      A     I      0.5; 
+      AN    I      2.6; 
+      O     Q      1.5; 
+      )     ; 
+      AN    M     12.0; 
+      =     Q      1.5; 
+NETWORK
+TITLE =
+
+      A(    ; 
+      A     I      0.6; 
+      AN    I      2.7; 
+      O     Q      1.6; 
+      )     ; 
+      AN    M     13.0; 
+      =     Q      1.6; 
+NETWORK
+TITLE =
+
+      A(    ; 
+      O     I      2.4; 
+      O     I      2.5; 
+      O     I      2.6; 
+      O     I      2.7; 
+      O     Q      1.7; 
+      )     ; 
+      A     I      0.7; 
+      AN    M      3.3; 
+      =     Q      1.7; 
+NETWORK
+TITLE =
+
+      A(    ; 
+      O     I      2.4; 
+      O     I      2.5; 
+      O     I      2.6; 
+      O     I      2.7; 
+      O     Q      2.0; 
+      )     ; 
+      A     I      1.0; 
+      =     Q      2.0; 
+NETWORK
+TITLE =
+
+      A(    ; 
+      A(    ; 
+      A(    ; 
+      O     Q      2.2; 
+      O     Q      2.3; 
+      O     Q      1.4; 
+      )     ; 
+      AN    I      2.6; 
+      AN    I      2.5; 
+      AN    M     11.0; 
+      O     ; 
+      A(    ; 
+      O     Q      2.5; 
+      O     Q      2.4; 
+      O     Q      1.5; 
+      )     ; 
+      A(    ; 
+      AN    Q      1.3; 
+      AN    Q      2.1; 
+      O     M      1.0; 
+      )     ; 
+      AN    I      2.6; 
+      )     ; 
+      AN    M     12.0; 
+      O     ; 
+      A(    ; 
+      O     Q      2.6; 
+      O     Q      1.6; 
+      )     ; 
+      A(    ; 
+      AN    Q      2.1; 
+      AN    Q      1.3; 
+      O     M      1.0; 
+      )     ; 
+      )     ; 
+      AN    M     13.0; 
+      AN    M      2.0; 
+      A(    ; 
+      ON    I      3.3; 
+      ON    I      2.7; 
+      )     ; 
+      =     M      1.0; 
+NETWORK
+TITLE =
+
+      A(    ; 
+      A(    ; 
+      A(    ; 
+      O     Q      2.5; 
+      O     Q      2.4; 
+      O     Q      1.5; 
+      )     ; 
+      AN    M     12.0; 
+      O     Q      2.3; 
+      O     Q      2.2; 
+      O     Q      1.4; 
+      )     ; 
+      AN    M     11.0; 
+      O     Q      2.1; 
+      O     Q      1.3; 
+      )     ; 
+      AN    M     10.0; 
+      AN    M      1.0; 
+      A(    ; 
+      ON    I      3.0; 
+      ON    I      2.4; 
+      )     ; 
+      =     M      2.0; 
+NETWORK
+TITLE =
+
+      A     M      2.2; 
+      =     Q      0.5; 
+NETWORK
+TITLE =
+
+      A     M      2.3; 
+      =     Q      0.4; 
+NETWORK
+TITLE =
+
+      A     M      1.0; 
+      A     I      1.7; 
+      =     M      2.3; 
+NETWORK
+TITLE =
+
+      A     M      2.0; 
+      A     I      2.0; 
+      =     M      2.2; 
+NETWORK
+TITLE =
+
+      A(    ; 
+      O     M     24.0; 
+      O(    ; 
+      A     M     10.0; 
+      BLD   100; 
+      FP    M     50.0; 
+      )     ; 
+      O(    ; 
+      A     M     11.0; 
+      BLD   100; 
+      FP    M     50.1; 
+      )     ; 
+      O(    ; 
+      A     M     12.0; 
+      BLD   100; 
+      FP    M     50.2; 
+      )     ; 
+      O(    ; 
+      A     M     13.0; 
+      BLD   100; 
+      FP    M     50.3; 
+      )     ; 
+      O(    ; 
+      A     M     20.0; 
+      BLD   100; 
+      FP    M     50.4; 
+      )     ; 
+      O(    ; 
+      A     M     21.0; 
+      BLD   100; 
+      FP    M     50.5; 
+      )     ; 
+      O(    ; 
+      A     M     22.0; 
+      BLD   100; 
+      FP    M     50.6; 
+      )     ; 
+      O(    ; 
+      A     M     20.3; 
+      BLD   100; 
+      FP    M     50.7; 
+      )     ; 
+      O(    ; 
+      A     M     20.4; 
+      BLD   100; 
+      FP    M     51.0; 
+      )     ; 
+      O(    ; 
+      A     M     20.5; 
+      BLD   100; 
+      FP    M     51.1; 
+      )     ; 
+      O     M     30.5; 
+      O     I      2.3; 
+      )     ; 
+      AN    M      3.3; 
+      A     I      2.1; 
+      =     M     30.5; 
+      =     Q      1.1; 
+NETWORK
+TITLE =
+
+      AN    I      0.7; 
+      AN    I      2.1; 
+      =     M      3.3; 
+      =     M      3.4; 
+NETWORK
+TITLE =
+// L (19/20/21) (= (6,7)*3), substitute the timer 
+      A(    ; 
+      A     M      3.4; 
+      JNB   _001; 
+      L     1; 
+      L     MW   166; 
+      +I    ; 
+      T     MW   166; 
+      AN    OV; 
+      SAVE  ; 
+      CLR   ; 
+_001: A     BR; 
+      )     ; 
+      A(    ; 
+      L     MW   166; 
+      L     20; 
+      >=I   ; 
+      )     ; 
+      R     M      3.4; 
+      S     M      3.5; 
+NETWORK
+TITLE =
+
+      O     I      0.7; 
+      O     I      2.1; 
+      =     L      0.0; 
+      A     L      0.0; 
+      BLD   102; 
+      R     M      3.5; 
+      A     L      0.0; 
+      JNB   _002; 
+      L     0; 
+      T     MW   166; 
+_002: NOP   0; 
+NETWORK
+TITLE =
+
+      A(    ; 
+      O     I      1.0; 
+      O     M      3.5; 
+      O     Q      1.2; 
+      )     ; 
+      A     I      2.2; 
+      AN    M     30.5; 
+      AN    I      2.3; 
+      =     Q      1.2; 
+NETWORK
+TITLE =
+
+      A     M      2.2; 
+      AN    I      2.2; 
+      AN    M     30.5; 
+      A     I      1.7; 
+      A     I      2.0; 
+      =     Q      0.6; 
+NETWORK
+TITLE =
+
+      A     M      2.3; 
+      AN    I      2.2; 
+      AN    M     30.5; 
+      A     I      1.7; 
+      A     I      2.0; 
+      =     Q      0.7; 
+END_FUNCTION
+
+FUNCTION FC 3 : VOID
+VERSION : 0.1
+
+BEGIN
+NETWORK
+TITLE =
+
+      O     I      2.4; 
+      O     I      3.0; 
+      S     M      8.0; 
+      R     M      8.1; 
+NETWORK
+TITLE =
+
+      O     I      2.5; 
+      O     I      3.1; 
+      S     M      8.1; 
+      R     M      8.0; 
+      R     M      8.2; 
+NETWORK
+TITLE =
+
+      O     I      2.6; 
+      O     I      3.2; 
+      S     M      8.2; 
+      R     M      8.1; 
+      R     M      8.3; 
+NETWORK
+TITLE =
+
+      O     I      2.7; 
+      O     I      3.3; 
+      S     M      8.3; 
+      R     M      8.2; 
+NETWORK
+TITLE =
+
+      A     M      2.2; 
+      =     Q      0.5; 
+NETWORK
+TITLE =
+
+      A     M      2.3; 
+      =     Q      0.4; 
+NETWORK
+TITLE =
+
+      O     M      8.0; 
+      O     M      8.2; 
+      =     Q      0.3; 
+NETWORK
+TITLE =
+
+      O     M      8.1; 
+      O     M      8.2; 
+      =     Q      0.2; 
+NETWORK
+TITLE =
+
+      A     M      8.3; 
+      =     Q      0.1; 
+END_FUNCTION
+
+ORGANIZATION_BLOCK OB 1
+VERSION : 0.1
+
+
+VAR_TEMP
+  TEMP0 : BYTE ;	
+  TEMP1 : BYTE ;	
+  TEMP2 : BYTE ;	
+  TEMP3 : BYTE ;	
+  TEMP4 : BYTE ;	
+  TEMP5 : BYTE ;	
+  TEMP6 : INT ;	
+  TEMP7 : INT ;	
+  TEMP8 : INT ;	
+  TEMP9 : DATE_AND_TIME ;	
+END_VAR
+BEGIN
+NETWORK
+TITLE =
+      A     I      3.7
+      =     L     20.0
+      A     L     20.0
+      BLD   102
+      R     M 8.0
+      A     L     20.0
+      BLD   102
+      R     M 8.1
+      A     L     20.0
+      BLD   102
+      R     M 8.2
+      A     L     20.0
+      BLD   102
+      R     M 8.3
+      A     L     20.0
+      JNB   _004
+      L     0
+      T     QD     0
+_004: NOP   0
+      A     L     20.0
+      JNB   _005
+      L     0
+      T     MD     0
+_005: NOP   0
+      A     L     20.0
+      JNB   _006
+      L     0
+      T     MD     4
+_006: NOP   0
+      A     L     20.0
+      JNB   _007
+      L     0
+      T     MD     8
+_007: NOP   0
+      A     L     20.0
+      JNB   _008
+      L     0
+      T     MD    12
+_008: NOP   0
+      A     L     20.0
+      JNB   _009
+      L     0
+      T     MD    16
+_009: NOP   0
+NETWORK
+TITLE =
+
+      CALL FC     3 ;
+      NOP   0; 
+NETWORK
+TITLE =
+      CALL FC     2 ;
+      NOP   0; 
+NETWORK
+TITLE =
+
+END_ORGANIZATION_BLOCK
+

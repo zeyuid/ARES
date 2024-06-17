@@ -1,0 +1,6 @@
+from awlsim.common.cython_support cimport *
+from awlsim.core.instructions.main cimport *
+
+cdef class AwlInsn_RND(AwlInsn):
+	cdef double __0p5_plus_epsilon
+	cdef double __0p5_minus_epsilon

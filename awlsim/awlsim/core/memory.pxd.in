@@ -1,0 +1,317 @@
+# -*- coding: utf-8 -*-
+#
+# AWL simulator - Central memory abstraction
+#
+# Copyright 2012-2018 Michael Buesch <m@bues.ch>
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+#
+
+from awlsim.common.cython_support cimport *
+from awlsim.common.datatypehelpers cimport *
+from awlsim.core.offset cimport *
+
+from libc.string cimport memcpy
+
+cimport cython
+
+
+cdef class GenericInteger(object):
+	cdef public uint32_t value
+	cdef public uint32_t mask
+
+	cdef void copyFrom(self, GenericInteger other)
+	cdef void reset(self)
+	cdef void set(self, int64_t value)
+	cdef void setByte(self, int64_t value)
+	cdef void setWord(self, int64_t value)
+	cdef void setDWord(self, int64_t value)
+	cdef void setPyFloat(self, double pyfl)
+	cdef uint32_t get(self)
+	cdef uint8_t getByte(self)
+	cdef uint16_t getWord(self)
+	cdef uint32_t getDWord(self)
+	cdef int8_t getSignedByte(self)
+	cdef int16_t getSignedWord(self)
+	cdef int32_t getSignedDWord(self)
+	cdef double getPyFloat(self)
+	cdef void setBit(self, uint8_t bitNumber)
+	cdef void clearBit(self, uint8_t bitNumber)
+	cdef void setBitValue(self, uint8_t bitNumber, _Bool value)
+	cdef unsigned char getBit(self, uint8_t bitNumber)
+
+cdef class GenericWord(GenericInteger):
+	pass
+
+cdef class GenericDWord(GenericInteger):
+	pass
+
+cdef class __PointerConstClass(object):
+	cdef public uint32_t AREA_SHIFT
+	cdef public uint64_t AREA_MASK
+	cdef public uint64_t AREA_MASK_S
+
+	cdef public uint64_t AREA_NONE
+	cdef public uint64_t AREA_P
+	cdef public uint64_t AREA_E
+	cdef public uint64_t AREA_A
+	cdef public uint64_t AREA_M
+	cdef public uint64_t AREA_DB
+	cdef public uint64_t AREA_DI
+	cdef public uint64_t AREA_L
+	cdef public uint64_t AREA_VL
+
+	cdef public uint64_t AREA_NONE_S
+	cdef public uint64_t AREA_P_S
+	cdef public uint64_t AREA_E_S
+	cdef public uint64_t AREA_A_S
+	cdef public uint64_t AREA_M_S
+	cdef public uint64_t AREA_DB_S
+	cdef public uint64_t AREA_DI_S
+	cdef public uint64_t AREA_L_S
+	cdef public uint64_t AREA_VL_S
+
+	cdef public dict area2str
+
+cdef public __PointerConstClass PointerConst
+
+cdef class Pointer(GenericDWord):
+	cpdef toPointer(self)
+	cpdef uint32_t toPointerValue(self)
+	cpdef toDBPointer(self)
+	cpdef uint64_t toDBPointerValue(self)
+	cpdef ANYPointer toANYPointer(self)
+	cpdef object toANYPointerValue(self)
+	cpdef object toNativePointerValue(self)
+	cpdef uint8_t getArea(self)
+	cpdef setArea(self, uint8_t newArea)
+	cpdef uint16_t getByteOffset(self)
+	cpdef uint8_t getBitOffset(self)
+
+cdef class DBPointer(Pointer):
+	cdef public uint16_t dbNr
+
+	cpdef toDBPointer(self)
+	cpdef uint64_t toDBPointerValue(self)
+	cpdef ANYPointer toANYPointer(self)
+	cpdef object toNativePointerValue(self)
+
+cdef class SymbolicDBPointer(DBPointer):
+	cdef public object identChain
+	cdef public object dbSymbol
+
+cdef class __ANYPointerConstClass(object):
+	cdef public uint8_t MAGIC
+	cdef public dict typeId2typeCode
+	cdef public dict typeCode2typeId
+
+cdef public __ANYPointerConstClass ANYPointerConst
+
+cdef class ANYPointer(DBPointer):
+	cdef public object dataType
+	cdef public uint16_t count
+
+	cpdef ANYPointer toANYPointer(self)
+	cpdef object toANYPointerValue(self)
+	cpdef object toNativePointerValue(self)
+
+cdef class Accu(GenericDWord):
+	pass
+
+cdef class Addressregister(Pointer):
+	pass
+
+cdef struct AwlMemoryObjectStruct:
+	uint8_t dataBytes[256]
+	uint16_t width
+	uint8_t __padding0
+	uint8_t __padding1
+
+ctypedef AwlMemoryObjectStruct * AwlMemoryObject
+
+cdef class AwlMemory(object):
+	cdef public uint8_t *__dataBytes
+	cdef public uint32_t __dataBytesLen
+
+	cpdef setDataBytes(self, bytearray dataBytes)
+	cpdef bytearray getDataBytes(self)
+	cdef uint8_t * getRawDataBytes(self)
+
+	cdef __fetchError(self, AwlOffset offset, uint32_t width)
+	cdef __storeError(self, AwlOffset offset, AwlMemoryObject memObj)
+
+	cdef AwlMemoryObject fetch(self, AwlOffset offset, uint32_t width) except NULL
+	cdef store(self, AwlOffset offset, AwlMemoryObject memObj)
+
+
+# Global ring buffer of in-flight AwlMemoryObjects.
+# The allocation works round-robin and assumes short-lived use.
+# An object allocated from this pool must _not_ be used permanently.
+# It is only supposed to be used in the callchain to/from AwlMemory.
+# The pool and the objects are not thread safe. It is assumed that
+# only one thread allocates from the pool.
+# The pool size must be a power of two.
+cdef public AwlMemoryObjectStruct memObjPool[8]
+cdef public uint8_t memObjPoolIndex
+
+
+@cython.cdivision(True)
+cdef inline AwlMemoryObject alloc_AwlMemoryObject(uint32_t width) except NULL:
+	cdef AwlMemoryObject memObj
+	cdef uint8_t indexMask = (sizeof(memObjPool) // sizeof(memObjPool[0])) - 1u
+	global memObjPoolIndex
+
+	memObj = &memObjPool[memObjPoolIndex]
+	memObjPoolIndex = (memObjPoolIndex + 1) & indexMask
+
+	memObj.width = <uint16_t>width
+
+	return memObj
+
+
+cdef inline  AwlMemoryObject make_AwlMemoryObject_fromScalar1(int64_t value) except NULL:
+	cdef AwlMemoryObject memObj
+	cdef uint8_t *dataBytes
+
+	memObj = alloc_AwlMemoryObject(1)
+	dataBytes = &memObj.dataBytes[0]
+	dataBytes[0] = 1 if value else 0
+	return memObj
+
+cdef inline AwlMemoryObject make_AwlMemoryObject_fromScalar8(int64_t value) except NULL:
+	cdef AwlMemoryObject memObj
+	cdef uint8_t *dataBytes
+
+	memObj = alloc_AwlMemoryObject(8)
+	dataBytes = &memObj.dataBytes[0]
+	dataBytes[0] = <uint8_t>value
+	return memObj
+
+cdef inline AwlMemoryObject make_AwlMemoryObject_fromScalar16(int64_t value) except NULL:
+	cdef AwlMemoryObject memObj
+	cdef uint8_t *dataBytes
+
+	memObj = alloc_AwlMemoryObject(16)
+	dataBytes = &memObj.dataBytes[0]
+	(<uint16_t *>dataBytes)[0] = htobe16(<uint16_t>value)
+	return memObj
+
+cdef inline AwlMemoryObject make_AwlMemoryObject_fromScalar24(int64_t value) except NULL:
+	cdef AwlMemoryObject memObj
+	cdef uint8_t *dataBytes
+
+	memObj = alloc_AwlMemoryObject(24)
+	dataBytes = &memObj.dataBytes[0]
+	(<uint16_t *>dataBytes)[0] = htobe16(<uint16_t>(<uint32_t>value >> 8))
+	dataBytes[2] = <uint8_t>value
+	return memObj
+
+cdef inline AwlMemoryObject make_AwlMemoryObject_fromScalar32(int64_t value) except NULL:
+	cdef AwlMemoryObject memObj
+	cdef uint8_t *dataBytes
+
+	memObj = alloc_AwlMemoryObject(32)
+	dataBytes = &memObj.dataBytes[0]
+	(<uint32_t *>dataBytes)[0] = htobe32(<uint32_t>value)
+	return memObj
+
+cdef inline AwlMemoryObject make_AwlMemoryObject_fromScalar48(int64_t value) except NULL:
+	cdef AwlMemoryObject memObj
+	cdef uint8_t *dataBytes
+
+	memObj = alloc_AwlMemoryObject(48)
+	dataBytes = &memObj.dataBytes[0]
+	(<uint32_t *>dataBytes)[0] = htobe32(<uint32_t>(<uint64_t>value >> 16))
+	(<uint16_t *>dataBytes)[2] = htobe16(<uint16_t>value)
+	return memObj
+
+cdef inline AwlMemoryObject make_AwlMemoryObject_fromScalar(int64_t value, uint32_t width) except NULL:
+	if width == 1:
+		return make_AwlMemoryObject_fromScalar1(value)
+	elif width == 16:
+		return make_AwlMemoryObject_fromScalar16(value)
+	elif width == 32:
+		return make_AwlMemoryObject_fromScalar32(value)
+	elif width == 8:
+		return make_AwlMemoryObject_fromScalar8(value)
+	elif width == 24:
+		return make_AwlMemoryObject_fromScalar24(value)
+	elif width == 48:
+		return make_AwlMemoryObject_fromScalar48(value)
+	else:
+		assert(0)
+	return NULL
+
+cdef inline AwlMemoryObject make_AwlMemoryObject_fromCArray(const uint8_t *dataBytes, uint32_t width) except NULL:
+	cdef AwlMemoryObject memObj
+
+	memObj = alloc_AwlMemoryObject(width)
+	memcpy(memObj.dataBytes, dataBytes, intDivRoundUp(width, 8))
+
+	return memObj
+
+cdef inline AwlMemoryObject make_AwlMemoryObject_fromBytes(bytearray dataBytes, uint32_t width) except NULL:
+	cdef AwlMemoryObject memObj
+
+	memObj = alloc_AwlMemoryObject(width)
+	memcpy(memObj.dataBytes, <const char *>dataBytes, intDivRoundUp(width, 8))
+	return memObj
+
+cdef AwlMemoryObject make_AwlMemoryObject_fromGeneric(object value, uint32_t width) except NULL
+
+
+cdef public AwlMemoryObject constMemObj_1bit_1
+cdef public AwlMemoryObject constMemObj_1bit_0
+cdef public AwlMemoryObject constMemObj_8bit_0
+cdef public AwlMemoryObject constMemObj_16bit_0
+cdef public AwlMemoryObject constMemObj_32bit_0
+
+
+cdef AwlMemoryObject_asScalar_failed(AwlMemoryObject memObj)
+cdef uint32_t AwlMemoryObject_asScalar(AwlMemoryObject memObj) except? 0x7FFFFFFF
+
+cdef inline uint32_t AwlMemoryObject_asScalar1(AwlMemoryObject memObj):
+	cdef const uint8_t *dataBytes
+	dataBytes = &memObj.dataBytes[0]
+	return <uint8_t>(dataBytes[0]) & 1u
+
+cdef inline uint32_t AwlMemoryObject_asScalar8(AwlMemoryObject memObj):
+	cdef const uint8_t *dataBytes
+	dataBytes = &memObj.dataBytes[0]
+	return <uint8_t>(dataBytes[0])
+
+cdef inline uint32_t AwlMemoryObject_asScalar16(AwlMemoryObject memObj):
+	cdef const uint8_t *dataBytes
+	dataBytes = &memObj.dataBytes[0]
+	return be16toh((<const uint16_t *>dataBytes)[0])
+
+cdef inline uint32_t AwlMemoryObject_asScalar24(AwlMemoryObject memObj):
+	cdef const uint8_t *dataBytes
+	dataBytes = &memObj.dataBytes[0]
+	return ((<uint32_t>be16toh((<const uint16_t *>dataBytes)[0]) << 8) |
+	        <uint32_t>dataBytes[2])
+
+cdef inline uint32_t AwlMemoryObject_asScalar32(AwlMemoryObject memObj):
+	cdef const uint8_t *dataBytes
+	dataBytes = &memObj.dataBytes[0]
+	return be32toh((<const uint32_t *>dataBytes)[0])
+
+cdef bytearray AwlMemoryObject_asBytes(AwlMemoryObject memObj)
+
+
+cdef AwlMemoryObject_assertWidth_failed(AwlMemoryObject memObj, uint32_t expectedWidth)
+cdef inline AwlMemoryObject_assertWidth(AwlMemoryObject memObj, uint32_t expectedWidth):
+	if unlikely(memObj.width != expectedWidth):
+		AwlMemoryObject_assertWidth_failed(memObj, expectedWidth)

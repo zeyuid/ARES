@@ -1,0 +1,15 @@
+from awlsim.common.cython_support cimport *
+from awlsim.core.hardware cimport *
+
+cdef class HardwareInterface_PyProfibus(AbstractHardwareInterface):
+	cdef public object pyprofibus
+	cdef public object master
+	cdef public object phy
+	cdef public object __conf
+	cdef public list cachedInputs
+	cdef public object slaveList
+
+	cdef readInputs(self)
+	cdef writeOutputs(self)
+	cdef bytearray directReadInput(self, uint32_t accessWidth, uint32_t accessOffset)
+	cdef ExBool_t directWriteOutput(self, uint32_t accessWidth, uint32_t accessOffset, bytearray data) except ExBool_val

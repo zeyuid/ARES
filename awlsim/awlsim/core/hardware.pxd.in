@@ -1,0 +1,17 @@
+from awlsim.common.cython_support cimport *
+from awlsim.core.main cimport *
+from awlsim.core.cpu cimport *
+
+cdef class AbstractHardwareInterface(object):
+	cdef public AwlSim sim
+	cdef public S7CPU cpu
+	cdef public _Bool __running
+	cdef public uint32_t inputAddressBase
+	cdef public uint32_t outputAddressBase
+	cdef public dict __paramsByName
+	cdef public dict __paramsByDescType
+
+	cdef readInputs(self)
+	cdef writeOutputs(self)
+	cdef bytearray directReadInput(self, uint32_t accessWidth, uint32_t accessOffset)
+	cdef ExBool_t directWriteOutput(self, uint32_t accessWidth, uint32_t accessOffset, bytearray data) except ExBool_val

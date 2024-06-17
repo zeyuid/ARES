@@ -1,0 +1,19 @@
+from awlsim.common.cython_support cimport *
+from awlsim.core.hardware cimport *
+
+cdef class HardwareInterface_LinuxCNC(AbstractHardwareInterface):
+	cdef public _Bool linuxCNC_initialized
+	cdef public object LinuxCNC_HAL
+	cdef public object halComponent
+	cdef public uint32_t inputSize
+	cdef public uint32_t outputSize
+	cdef public _Bool __configDone
+	cdef public list __activeInputs
+	cdef public dict __activeInputsAddr2Sig
+	cdef public list __activeOutputs
+	cdef public dict __activeOutputsAddr2Sig
+
+	cdef readInputs(self)
+	cdef writeOutputs(self)
+	cdef bytearray directReadInput(self, uint32_t accessWidth, uint32_t accessOffset)
+	cdef ExBool_t directWriteOutput(self, uint32_t accessWidth, uint32_t accessOffset, bytearray data) except ExBool_val

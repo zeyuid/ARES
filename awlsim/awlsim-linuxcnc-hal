@@ -1,0 +1,380 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+# AWL simulator - LinuxCNC HAL module
+#
+# Copyright 2013-2020 Michael Buesch <m@bues.ch>
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+#
+
+from __future__ import division, absolute_import, print_function, unicode_literals
+
+import sys
+import os
+import getopt
+
+from awlsim_loader.common import *
+from awlsim_loader.core import *
+from awlsim_loader.coreserver import *
+from awlsim_loader.coreclient import *
+
+from awlsim.common.monotonic import monotonic_time
+
+
+class LinuxCNC_NotRunning(Exception):
+	pass
+
+def linuxCNCTriggerEStop():
+	# Try to trigger LinuxCNC emergency stop.
+	global linuxcnc_mod
+	if linuxcnc_mod is not None:
+		try:
+			cmd = linuxcnc_mod.command()
+			cmd.state(linuxcnc_mod.STATE_ESTOP)
+			cmd.wait_complete()
+		except Exception as e:
+			print("ERROR: Failed to trigger LinuxCNC E-Stop: %s" % str(e),
+			      file=sys.stderr)
+		else:
+			print("Triggered LinuxCNC E-Stop")
+
+# Check presence of LinuxCNC.
+# Returns normally, if LinuxCNC is detected.
+# Raises LinuxCNC_NotRunning, if LinuxCNC is not detected.
+def watchdogHook(_unused = None):
+	# Check whether LinuxCNC is running.
+	for lockname in ("/tmp/linuxcnc.lock", "/tmp/emc.lock"):
+		if os.path.exists(lockname):
+			return True
+	if not opt_watchdog:
+		# The check is disabled. Return success.
+		return True
+	printError("LinuxCNC doesn't seem to be running. "\
+		   "(Use '--watchdog off' to disable this check.)")
+	raise LinuxCNC_NotRunning()
+
+def usage():
+	print("awlsim-linuxcnc-hal version %s" % VERSION_STRING)
+	print("")
+	print("Usage: awlsim-linuxcnc-hal [OPTIONS] PROJECT.awlpro")
+	print("")
+	print("Options:")
+	print(" -w|--rw-project         Enable project file writing after download of new program.")
+	print("                         Default: Do not write to the project file.")
+	print("")
+	print(" -i|--input-size SIZE    The input area size, in bytes.")
+	print("                         Overrides input-size from project file.")
+	print(" -I|--input-base BASE    The AWL/STL input address base.")
+	print("                         Overrides input-base from project file.")
+	print(" -o|--output-size SIZE   The output area size, in bytes.")
+	print("                         Overrides output-size from project file.")
+	print(" -O|--output-base BASE   The AWL/STL output address base.")
+	print("                         Overrides output-base from project file.")
+	print("")
+	print(" -l|--listen HOST:PORT   Set the address and port where the")
+	print("                         awlsim core server should listen on.")
+	print("                         Defaults to %s:%d" %\
+		  (AwlSimServer.DEFAULT_HOST, AwlSimServer.DEFAULT_PORT))
+	print("")
+	print(" -L|--loglevel LVL       Set the log level:")
+	print("                         0: Log nothing")
+	print("                         1: Log errors")
+	print("                         2: Log errors and warnings")
+	print("                         3: Log errors, warnings and info messages (default)")
+	print("                         4: Verbose logging")
+	print("                         5: Extremely verbose logging")
+	print(" -N|--nice NICE          Renice the process. -20 <= NICE <= 19.")
+	print("                         Default: Do not renice")
+	print("")
+	print("Debugging options:")
+	print(" -W|--watchdog 1/0       Enable/disable LinuxCNC runtime watchdog.")
+	print("                         Default: on")
+	print(" -M|--max-runtime SEC    Module will be stopped after SEC seconds.")
+	print("                         Default: No timeout")
+	print(" -x|--extended-insns     Force-enable extended instructions")
+	print("")
+	print("For an example LinuxCNC HAL configuration see:")
+	print("  examples/linuxcnc-demo/linuxcnc-demo.hal")
+
+def main():
+	global linuxcnc_mod
+	linuxcnc_mod = None
+
+	global opt_inputSize
+	global opt_inputBase
+	global opt_outputSize
+	global opt_outputBase
+	global opt_listen
+	global opt_loglevel
+	global opt_nice
+	global opt_watchdog
+	global opt_maxRuntime
+	global opt_extInsns
+	global opt_rwProject
+
+	opt_inputSize = None
+	opt_inputBase = None
+	opt_outputSize = None
+	opt_outputBase = None
+	opt_listen = (AwlSimServer.DEFAULT_HOST, AwlSimServer.DEFAULT_PORT)
+	opt_loglevel = Logging.LOG_INFO
+	opt_nice = None
+	opt_watchdog = True
+	opt_maxRuntime = None
+	opt_extInsns = None
+	opt_rwProject = False
+
+	try:
+		(opts, args) = getopt.getopt(sys.argv[1:],
+			"hi:I:o:O:l:L:N:W:M:xw",
+			[ "help", "input-size=", "input-base=",
+			  "output-size=", "output-base=",
+			  "listen=",
+			  "loglevel=", "nice=",
+			  "watchdog=", "max-runtime=", "extended-insns",
+			  "rw-project", ])
+	except getopt.GetoptError as e:
+		printError(str(e))
+		usage()
+		return 1
+	for (o, v) in opts:
+		if o in ("-h", "--help"):
+			usage()
+			return 0
+		if o in ("-i", "--input-size"):
+			try:
+				opt_inputSize = int(v)
+			except ValueError:
+				printError("-i|--input-size: Invalid argument")
+				return 1
+		if o in ("-I", "--input-base"):
+			try:
+				opt_inputBase = int(v)
+			except ValueError:
+				printError("-I|--input-base: Invalid argument")
+				return 1
+		if o in ("-o", "--output-size"):
+			try:
+				opt_outputSize = int(v)
+			except ValueError:
+				printError("-o|--output-size: Invalid argument")
+				return 1
+		if o in ("-O", "--output-base"):
+			try:
+				opt_outputBase = int(v)
+			except ValueError:
+				printError("-O|--output-base: Invalid argument")
+				return 1
+		if o in ("-l", "--listen"):
+			try:
+				host, port = parseNetAddress(v)
+				if not host.strip() or\
+				   host in {"any", "all"}:
+					host = ""
+				if port is None:
+					port = AwlSimServer.DEFAULT_PORT
+				opt_listen = (host, port)
+			except AwlSimError as e:
+				printError("-l|--listen: Invalid host/port")
+				return 1
+		if o in ("-L", "--loglevel"):
+			try:
+				opt_loglevel = int(v)
+			except ValueError:
+				printError("-L|--loglevel: Invalid log level")
+				return 1
+		if o in ("-N", "--nice"):
+			try:
+				opt_nice = int(v)
+				if opt_nice < -20 or opt_nice > 19:
+					raise ValueError
+			except ValueError:
+				printError("-N|--nice: Invalid niceness level")
+				return 1
+		if o in ("-W", "--watchdog"):
+			opt_watchdog = str2bool(v)
+		if o in ("-M", "--max-runtime"):
+			try:
+				opt_maxRuntime = float(v)
+			except ValueError:
+				printError("-M|--max-runtime: Invalid time format")
+				return 1
+		if o in ("-x", "--extended-insns"):
+			opt_extInsns = True
+		if o in ("-w", "--rw-project"):
+			opt_rwProject = True
+	if len(args) != 1:
+		usage()
+		return 1
+	projectFile = args[0]
+
+	result = ExitCodes.EXIT_OK
+	server = None
+	try:
+		Logging.setPrefix("awlsim-linuxcnc: ")
+		Logging.setLoglevel(opt_loglevel)
+
+		# Adjust process priority
+		if opt_nice is not None:
+			try:
+				os.nice(opt_nice)
+			except OSError as e:
+				printError("Failed to renice process to "
+					   "%d: %s" % (opt_nice, str(e)))
+				return 1
+
+		# Try to import the LinuxCNC HAL module
+		try:
+			import hal as LinuxCNC_HAL
+		except ImportError as e:
+			printError("Failed to import LinuxCNC HAL "
+				   "module: %s" % str(e))
+			return 1
+		try:
+			import linuxcnc as linuxcnc_mod
+		except ImportError as e:
+			printError("Failed to import LinuxCNC "
+				   "module: %s" % str(e))
+			return 1
+
+		# Create the LinuxCNC HAL component.
+		halComponent = LinuxCNC_HAL.component("awlsim")
+
+		# Read the project.
+		project = Project.fromProjectOrRawAwlFile(projectFile)
+		hwmodSettings = project.getHwmodSettings()
+
+		# Get the 'linuxcnc' hardware module descriptor.
+		linuxcncHwmodDesc = None
+		for modDesc in hwmodSettings.getLoadedModules():
+			if modDesc.getModuleName() == "linuxcnc":
+				if linuxcncHwmodDesc:
+					printError("ERROR: More than one 'linuxcnc' hardware "
+						   "module found in the project file. Only "
+						   "one 'linuxcnc' module is supported.")
+				linuxcncHwmodDesc = modDesc
+		if not linuxcncHwmodDesc:
+			if opt_inputBase is None and\
+			   opt_outputBase is None and\
+			   opt_inputSize is None and\
+			   opt_outputSize is None:
+				printWarning("Warning: Hardware module 'linuxcnc' not "
+					     "included in project file. "
+					     "Loading module nevertheless.")
+			modDesc = HwmodDescriptor(moduleName = "linuxcnc",
+						  parameters = {
+				"inputAddressBase"	: "0",
+				"outputAddressBase"	: "0",
+				"inputSize"		: "32",
+				"outputSize"		: "32",
+			})
+			hwmodSettings.addLoadedModule(modDesc)
+			linuxcncHwmodDesc = modDesc
+		# Override hardware module parameters, if required.
+		if opt_inputBase is not None:
+			linuxcncHwmodDesc.setParameterValue("inputAddressBase",
+							    str(opt_inputBase))
+		if opt_inputSize is not None:
+			linuxcncHwmodDesc.setParameterValue("inputSize",
+							    str(opt_inputSize))
+		if opt_outputBase is not None:
+			linuxcncHwmodDesc.setParameterValue("outputAddressBase",
+							    str(opt_outputBase))
+		if opt_outputSize is not None:
+			linuxcncHwmodDesc.setParameterValue("outputSize",
+							    str(opt_outputSize))
+
+		# Override CPUConf, if required.
+		conf = project.getCpuConf()
+		if opt_maxRuntime is not None:
+			conf.setRunTimeLimitUs(int(round(opt_maxRuntime * 1000000.0)))
+		if opt_extInsns is not None:
+			conf.setExtInsnsEn(opt_extInsns)
+
+		# Pass the hal component singleton to the Awlsim hw module.
+		loader = HwModLoader.loadModule("linuxcnc")
+		mod = loader.getModule()
+		mod.setLinuxCNCHalComponentSingleton(LinuxCNC_HAL, halComponent)
+
+		server = AwlSimServer()
+		server.setCycleExitHook(watchdogHook)
+		printInfo("Starting core server...")
+		server.startup(host=opt_listen[0],
+			       port=opt_listen[1],
+			       project=project,
+			       projectWriteBack=opt_rwProject,
+			       raiseExceptionsFromRun=True,
+			       handleMaintenanceServerside=True)
+		try:
+			server.setRunState(server.STATE_RUN)
+		except AwlSimError as e:
+			printError("Failed to go to RUN state.")
+			# Continue to main loop.
+		lastExceptionTime = monotonic_time() - 1.0
+		exceptionCount = 0
+		while True:
+			try:
+				server.run()
+			except (AwlParserError, AwlSimError) as e:
+				linuxCNCTriggerEStop()
+				now = monotonic_time()
+				if now - lastExceptionTime < 1.0:
+					# The last fault is less than one second ago.
+					exceptionCount += 1
+				else:
+					exceptionCount = 0
+				lastExceptionTime = now
+				if exceptionCount >= 10:
+					# Many exceptions happened in a row.
+					# Raise a fatal exception.
+					printError("Fatal fault detected")
+					raise e
+				else:
+					# Non-fatal fault.
+					# Ensure the CPU is stopped and enter
+					# the run loop again.
+					printError(e.getReport())
+					printError("CPU stopped due to fault")
+					server.setRunState(server.STATE_STOP)
+					continue
+			# Run loop exited normally. Bail out.
+			break
+	except LinuxCNC_NotRunning as e:
+		result = ExitCodes.EXIT_ERR_OTHER
+	except KeyboardInterrupt as e:
+		result = ExitCodes.EXIT_ERR_OTHER
+	except (AwlParserError, AwlSimError) as e:
+		printError(e.getReport())
+		result = ExitCodes.EXIT_ERR_SIM
+	except MaintenanceRequest as e:
+		if e.requestType in (MaintenanceRequest.TYPE_SHUTDOWN,
+				     MaintenanceRequest.TYPE_STOP,
+				     MaintenanceRequest.TYPE_RTTIMEOUT):
+			result = ExitCodes.EXIT_OK
+		else:
+			printError("Received invalid maintenance request %d" %\
+				   e.requestType)
+			result = ExitCodes.EXIT_ERR_SIM
+	finally:
+		linuxCNCTriggerEStop()
+		if server:
+			server.shutdown()
+	printInfo("LinuxCNC HAL module shutdown.")
+
+	return result
+
+if __name__ == "__main__":
+	sys.exit(main())
