@@ -20,3 +20,4 @@ G_control = graph_generation(sensor_id, command_id, E_s_u, 1);
 end
 
 
+

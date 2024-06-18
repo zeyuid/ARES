@@ -1,0 +1,75 @@
+
+!!!Execute 54 cyclcs for the 1th G code !!!
+
+!!!Execute 54 cyclcs for the 2th G code !!!
+
+!!!Execute 14 cyclcs for the 3th G code !!!
+
+!!!Execute 54 cyclcs for the 4th G code !!!
+
+!!!Execute 54 cyclcs for the 5th G code !!!
+
+!!!Execute 14 cyclcs for the 6th G code !!!
+
+!!!Execute 4 cyclcs for the 7th G code !!!
+
+!!!Execute 2 cyclcs for the 8th G code !!!
+
+!!!Execute 36 cyclcs for the 9th G code !!!
+
+!!!Execute 1 cyclcs for the 10th G code !!!
+
+!!!Execute 1 cyclcs for the 11th G code !!!
+
+!!!Execute 1088 cyclcs for the 12th G code !!!
+
+!!!Execute 400 cyclcs for the 13th G code !!!
+
+!!!Execute 120 cyclcs for the 14th G code !!!
+
+!!!Execute 32 cyclcs for the 15th G code !!!
+
+!!!Execute 28 cyclcs for the 16th G code !!!
+
+!!!Execute 20 cyclcs for the 17th G code !!!
+
+!!!Execute 112 cyclcs for the 18th G code !!!
+
+!!!Execute 3 cyclcs for the 19th G code !!!
+
+!!!Execute 1 cyclcs for the 20th G code !!!
+
+!!!Execute 1 cyclcs for the 21th G code !!!
+
+!!! the total Execution time is 5.231115e+04 seconds !!!
+!!! the total Execution time is 1.158300e-02 seconds !!!
+!!! the total Execution time is 9.129800e-02 seconds !!!
+!!! the total Execution time is 9.847000e-03 seconds !!!
+!!! the total Execution time is 1.052800e-02 seconds !!!
+!!! the total Execution time is 1.048700e-02 seconds !!!
+!!! the total Execution time is 2.172160e-01 seconds !!!
+!!! the total Execution time is 1.690600e-02 seconds !!!
+!!!Execute 1 cyclcs for the 21th G code !!!
+
+!!! the total Execution time is 2.923402e+01 seconds !!!
+!!! the total Execution time is 1.931912e-02 seconds !!!
+!!! the total Execution time is 1.745675e-02 seconds !!!
+!!!Execute 1 cyclcs for the 21th G code !!!
+
+!!! the total Execution time is 1.930116e+01 seconds !!!
+!!!Execute 1 cyclcs for the 21th G code !!!
+
+!!! the total Execution time is 6.333925e+01 seconds !!!
+!!!Execute 1 cyclcs for the 21th G code !!!
+
+!!! the total Execution time is 3.311746e+01 seconds !!!
+!!! the total Execution time is 1.942917e-02 seconds !!!
+!!!Execute 1 cyclcs for the 21th G code !!!
+
+!!! the total Execution time is 1.909997e+01 seconds !!!
+!!!Execute 1 cyclcs for the 21th G code !!!
+
+!!! the total Execution time is 1.256033e+02 seconds !!!
+!!!Execute 1 cyclcs for the 21th G code !!!
+
+!!! the total Execution time is 2.677294e+01 seconds !!!

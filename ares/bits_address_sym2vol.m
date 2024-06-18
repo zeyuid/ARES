@@ -18,7 +18,6 @@ end
 output_length = ceil( (max([G_code{3, :}])+1) /8 ) * 8 ;
 
 
-
 % first get the length of I_range, the largest byte and bit. 
 I_expression = 'I(?<byte>\d+)[_\.](?<bit>\d+)' ; 
 for i = 1:size(G_code, 2)
@@ -37,13 +36,6 @@ end
 % find the maximum vol, to fix the length of I address: ceil(vol/8)*8 
 input_length = ceil( (max([G_code{4, :}])+1) /8 ) *8 ;
 
-
-% obtain the volum of each Q address, in the IL_analyzer output. from the top direction  
-% obtain the volum of each I address, in the IL_analyzer output. from the top direction  
-% for i = 1:size(G_code, 2)
-%     G_code{3, i} = output_length - G_code{3, i} ; % Q volumn 
-%     G_code{4, i} = input_length - G_code{4, i}  ; % I volumn 
-% end
 
 end
 

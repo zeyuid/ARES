@@ -2,7 +2,6 @@ function G_code = Get_G_code(IOmap_path)
 % raw 1: the output register address, i.e., Q1_1
 % raw 2: the correlated input register address, i.e., {I1.1, I1.2}
 
-
 text = fileread(IOmap_path) ;
 IO_map = jsondecode(text) ;
 Out_addr = fieldnames(IO_map) ;
@@ -25,3 +24,4 @@ end
 % raw 4: the volumn distance of input register address, from the end of PLC input vector, i.e., [9, 10] 
 
 end
+

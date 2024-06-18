@@ -1,4 +1,4 @@
-function [mapping_cyclic_num, Mapping_solution_num, input_unique_ratio, in_right_ratio, output_unique_ratio, out_right_ratio] = GRAPH_MAPING_CENTOR(identify_length, occupation_min, info_delta_min, transferdelay, autocorrelation, tau, mapping_data_period, mapping_threshold, mapping_greedy, mapping_data_start, trainning_data_path, savefilepath ) 
+function [mapping_cyclic_num, Mapping_solution_num, input_unique_ratio, in_right_ratio, output_unique_ratio, out_right_ratio] = GRAPH_MAPING_CENTOR(identify_length, occupation_min, info_delta_min, transferdelay, autocorrelation, tau, mapping_data_period, mapping_threshold, mapping_greedy, trainning_data_path, savefilepath ) 
 % inputs: identify_length, occupation_min, info_delta_min, transferdelay, autocorrelation, tau, mapping_data_length, mapping_threshold, mapping_greedy 
 % outputs: Mapping_solution_num, input_unique_ratio, in_right_ratio, output_unique_ratio, out_right_ratio
 
@@ -18,6 +18,28 @@ for i = 1:size(G_code, 2)
     G_code{5, i} = length(G_code{2,i}) ;
 end
 G_code = sortrows(G_code',5)';
+
+%%%%% for the nodes that have same degree, randomize their positions  
+last_degree = G_code{5, 1}; 
+equal_col = []; 
+for i = 1:size(G_code, 2)
+    if G_code{5, i} == last_degree
+        equal_col = [equal_col, i]; 
+    else
+        temp_data = G_code(:, equal_col);
+        rand_order = randperm(length(equal_col)) ; 
+        G_code(:, equal_col) = temp_data(:, rand_order);
+        equal_col = i; 
+        last_degree = G_code{5, i};
+    end
+end
+temp_data = G_code(:, equal_col);
+rand_order = randperm(length(equal_col)) ;
+G_code(:, equal_col) = temp_data(:, rand_order);
+
+%%% below is one of the randomized G_code, with which ARES generated the previous mapping results   
+load('exampled_Gcode.mat', 'G_code'); 
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%    Part II      %%%%%%%%%%
@@ -64,9 +86,9 @@ end
 %%%%%%%% solution selcetion threshold, which doesn't affect the mapping results, but save the storing space when mapping
 %%%%%%%% greedy, if set as 1, then totally greedy
 
-data_for_mapping = data_raw( mapping_data_period, :) ; 
+data_mapping = data_raw( mapping_data_period, :) ; 
 tic ;
-[Mappings, mapping_cyclic_num, mappings_files_path] = Graph_mapping(G_code, G_data, data_for_mapping, redundant_id, constant_id, mapping_threshold, mapping_greedy, savefilepath , mapping_data_start) ;
+[Mappings, mapping_cyclic_num, mappings_files_path] = Graph_mapping(G_code, G_data, data_mapping, redundant_id, constant_id, mapping_threshold, mapping_greedy, savefilepath ) ;
 toc ;
 
 fid = fopen(mappings_files_path+'cyclic_number_logs.txt', 'a') ;

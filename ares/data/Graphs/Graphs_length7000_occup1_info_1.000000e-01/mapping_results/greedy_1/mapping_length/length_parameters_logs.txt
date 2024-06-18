@@ -1,0 +1,18 @@
+the analyzed impact are collected as rows: mapping_data_length_list, cyclic_num_list, Mapping_solution_num_list, input_unique_ratio_list, input_right_ratio_list, output_unique_ratio_list , output_right_ratio_list 
+!!! The evaluated lenght parameters are 7000 !!!
+the analyzed impact are collected as rows: mapping_data_length_list, cyclic_num_list, Mapping_solution_num_list, input_unique_ratio_list, input_right_ratio_list, output_unique_ratio_list , output_right_ratio_list 
+!!! The evaluated lenght parameters are 7000 !!!
+the analyzed impact are collected as rows: mapping_data_length_list, cyclic_num_list, Mapping_solution_num_list, input_unique_ratio_list, input_right_ratio_list, output_unique_ratio_list , output_right_ratio_list 
+!!! The evaluated lenght parameters are 7000 !!!
+the analyzed impact are collected as rows: mapping_data_length_list, cyclic_num_list, Mapping_solution_num_list, input_unique_ratio_list, input_right_ratio_list, output_unique_ratio_list , output_right_ratio_list 
+!!! The evaluated lenght parameters are 7000 !!!
+the analyzed impact are collected as rows: mapping_data_length_list, cyclic_num_list, Mapping_solution_num_list, input_unique_ratio_list, input_right_ratio_list, output_unique_ratio_list , output_right_ratio_list 
+!!! The evaluated lenght parameters are 7000 !!!
+the analyzed impact are collected as rows: mapping_data_length_list, cyclic_num_list, Mapping_solution_num_list, input_unique_ratio_list, input_right_ratio_list, output_unique_ratio_list , output_right_ratio_list 
+!!! The evaluated lenght parameters are 7000 !!!
+the analyzed impact are collected as rows: mapping_data_length_list, cyclic_num_list, Mapping_solution_num_list, input_unique_ratio_list, input_right_ratio_list, output_unique_ratio_list , output_right_ratio_list 
+!!! The evaluated lenght parameters are 7000 !!!
+the analyzed impact are collected as rows: mapping_data_length_list, cyclic_num_list, Mapping_solution_num_list, input_unique_ratio_list, input_right_ratio_list, output_unique_ratio_list , output_right_ratio_list 
+!!! The evaluated lenght parameters are 7000 !!!
+the analyzed impact are collected as rows: mapping_data_length_list, cyclic_num_list, Mapping_solution_num_list, input_unique_ratio_list, input_right_ratio_list, output_unique_ratio_list , output_right_ratio_list 
+!!! The evaluated lenght parameters are 7000 !!!

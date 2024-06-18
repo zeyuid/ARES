@@ -38,18 +38,18 @@ for k = 1: length(mapping_greedy_list)
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         mapping_data_length = mapping_data_length_list(1, i) ;
         selection_end = identify_length - mapping_data_length ;
-        mapping_data_start_list = randi( [1 selection_end+1], 1, repeat_times ) ;
-        mapping_data_start_list(1) = 1;
         
+        
+
         mapping_threshold = 0.95 ;
+        mapping_data_start = 1; 
         
         for j = 1 : repeat_times
             
-            mapping_data_start = mapping_data_start_list(j) ;
-            mapping_data_period = mapping_data_start : mapping_data_start + mapping_data_length - 1 ;
+            mapping_data_period = 1 : mapping_data_length ;
             % for each parameter, do the "GRAPH_MAPING_CENTOR", and log the analysis results
             % cyclic_num: a number; Mapping_solution_num: number; input_unique_ratio: number; in_right_ratio: number; output_unique_ratio: number; out_right_ratio: number
-            [cyclic_num, Mapping_solution_num, input_unique_ratio, input_right_ratio, output_unique_ratio, output_right_ratio] = GRAPH_MAPING_CENTOR(identify_length, occupation_min, info_delta_min, transferdelay, autocorrelation, tau, mapping_data_period, mapping_threshold, mapping_greedy, mapping_data_start, trainning_data_path, savefilepath ) ;
+            [cyclic_num, Mapping_solution_num, input_unique_ratio, input_right_ratio, output_unique_ratio, output_right_ratio] = GRAPH_MAPING_CENTOR(identify_length, occupation_min, info_delta_min, transferdelay, autocorrelation, tau, mapping_data_period, mapping_threshold, mapping_greedy, trainning_data_path, savefilepath ) ;
             
             length_impact{1, j} = mapping_data_length_list(i) ;
             length_impact{2, j} = cyclic_num ; 
@@ -93,7 +93,6 @@ parameters_logs = sprintf("!!! The evaluated greedy parameters are %d !!!\n", ma
 fprintf(fid, "\n" ) ;
 fprintf(fid, parameters_logs );
 fclose(fid);
-
 
 
 

@@ -20,7 +20,6 @@ if length(tau) == 1
 end
 
 
-
 for i = 1 : num_Y
     
     neighbors = [];

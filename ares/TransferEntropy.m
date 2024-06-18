@@ -9,7 +9,6 @@ function [ifactor, Delta_TTE, occupation] = TransferEntropy(X, Y, Xprime, t, w, 
 %   tau: sample length of correlation
 
 
-
 % go through the time series X and Y, and generate Xpat, Ypat, and Yt 
 Xpat=[]; Ypat=[]; Xprimepat=[]; Yt=[];
 starttime = max(t + tau, w) + 1 ; 

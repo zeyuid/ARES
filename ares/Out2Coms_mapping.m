@@ -8,12 +8,7 @@ function [Outnode_Mappings] = Out2Coms_mapping( Outaddr_pair, G_data, data_raw, 
 % False vol.num : size(data_raw,2)-1
 % True vol.num : size(data_raw,2)
 
-% length(constant_id) 
-
-
 [input_row, ~] = size(data_raw) ; 
-
-
 
 commandfield_name = ["command", "SENSOR", "weight", "occupation", "Deg"] ; 
 codefield_name = ["OUT_sym", "INPUT_sym", "OUT", "IN", "Deg"] ; 
@@ -22,9 +17,6 @@ mapfield_name = ["OUT", "COM", "IN", "SENSOR", "Deg"] ;
 Outnode = cell2struct(Outaddr_pair, codefield_name , 1) ; 
 degree_out = Outnode.Deg ; 
 
-
-
-
 if ~isempty(Mappings_before)
     
     In_addr_left = setdiff(Outnode.IN, Mappings_before{3, 1} ) ;
@@ -32,12 +24,9 @@ if ~isempty(Mappings_before)
         % only keep the diveristy of sensor permutaion, 
         % ignore the diveristy of commands permutation,  
 	    % because in the following, we don't use the historical commands mapping information   
-        % this will reduce the the times from 128 to 16 
         correlated_sensors_permutations = reshape([Mappings_before{4, :}],  length(Mappings_before{4, 1} ), size(Mappings_before, 2) )' ; 
         
-        
         correlated_sensors_permutations = unique(correlated_sensors_permutations ,  'rows', 'stable') ; 
-        
         Using_Mappings = cell(5, size(correlated_sensors_permutations, 1) ) ; 
         for permute = 1: size(correlated_sensors_permutations, 1) 
             Using_Mappings{1, permute} = Mappings_before{1, 1} ; % can be any value, because it is useless in the following steps   
@@ -49,16 +38,13 @@ if ~isempty(Mappings_before)
         Mappings_before = Using_Mappings ;
     else
         correlated_sensors_permutations = reshape([Mappings_before{4, :}],  length(Mappings_before{4, 1} ), size(Mappings_before, 2) )' ; 
-        
         correlated_sensors_permutations = unique(correlated_sensors_permutations ,  'rows', 'stable') ; 
         
-
         cyclic_time_using_command_info = size(Mappings_before, 2) * (21-length(Mappings_before{2,1}) ) ; 
         cyclic_time_nonusing_command_info =  size(correlated_sensors_permutations, 1) * (21) ; 
         
         if cyclic_time_nonusing_command_info < cyclic_time_using_command_info
             % update the Mappings_before without the command info. 
-            
             Using_Mappings = cell(5, size(correlated_sensors_permutations, 1) ) ; 
             for permute = 1: size(correlated_sensors_permutations, 1) 
                 Using_Mappings{1, permute} = [] ; % can be any value, because it is useless in the following steps   
@@ -71,18 +57,17 @@ if ~isempty(Mappings_before)
             
         end
     end
-
-    Outnode_Mappings = cell(5, 0) ;
     % Outnode_Mappings record all mappings, under all Mappings_before  
+    Outnode_Mappings = cell(5, 0) ;
+    
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %%%%%%%%%%%% debug: for solution = 1
+    %%%%%%%%%%%% debug: 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % do the mapping under the each given mapping solution 
     for solution = 1:size( Mappings_before , 2) 
         Outaddrmappings = cell(5, 0 ) ;
         % Given solution(:, i), Outaddrmappings record all mappings between Outnode and Commandnode 
-        
         % update the code variables with data, under Mapping  
         partial_map = Mappings_before(:, solution) ;
         partial_mapping = cell2struct(partial_map, mapfield_name , 1) ; 
@@ -91,7 +76,6 @@ if ~isempty(Mappings_before)
         In_addr_left = setdiff(Outnode.IN, partial_mapping.IN ) ; % can be omitted  
         if ~isempty(In_addr_left)
             % the input address is not totally decided by "partial_map"  
-            
             % map Outaddr_pair with all command node in G_data 
              
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -102,14 +86,12 @@ if ~isempty(Mappings_before)
                 if intersect( G_data{1, i}, partial_mapping.COM ) 
                     continue ; 
                 end
-                
                 %%%%%%%%% else, do the mapping  
                 Commandnode = cell2struct(G_data(:, i), commandfield_name , 1) ; 
                 degree_com = Commandnode.Deg ; 
                 
                 Sensor_left = setdiff(Commandnode.SENSOR, partial_mapping.SENSOR ) ; 
                 
-                % 3 is number of i 
                 if length(In_addr_left) - length(Sensor_left)<0 || length(In_addr_left) - length(Sensor_left)> constant_num 
                     continue ; 
                 end
@@ -128,11 +110,10 @@ if ~isempty(Mappings_before)
             
         else
             % the input addresses are totally decided by "partial_map",  
-            % only runs one time awlsim 
+            % only runs one time PLC-twin
             
             input_addr_posi_exist = partial_mapping.IN ; 
-            % INPUTS = zeros( input_row , ceil( max( [input_addr_posi_exist, input_addr_posi]+1 )/8 ) *8, 'logical') ; 
-            INPUTS = zeros( input_row, 32, 'logical') ; % adjust by the input length  
+            INPUTS = zeros( input_row, 32, 'logical') ; 
             INPUTS(:, end - input_addr_posi_exist) = data_raw(:, partial_mapping.SENSOR) ; 
             
             % add the initialzation 
@@ -140,24 +121,12 @@ if ~isempty(Mappings_before)
             initialization{1, 1} = data_raw(1, 1:25) ;
             initialization{2, 1} = data_raw(1, 26:46 ) ;
 
-            
             % run alwsim given the INPUTS  
             OUTPUTS = PLC_Twin_CORE(INPUTS, initialization);
             output_estimate = OUTPUTS(:, end - Outnode.OUT) ; % from the bottom direction 
             
-            % only keep the diveristy of sensor permutaion, 
-            % ignore the diveristy of commands permutation,  
-            % because in the following, we don't use the historical commands mapping information   
-            % this will reduce the the times from 128 to 16   
             for i = 1: size(G_data, 2)
-                
-%                 %%%%%%%%% if partial_map.COM include G_data{1, i}, continue  
-%                 if intersect( G_data{1, i}, partial_mapping.COM ) 
-%                     continue ; 
-%                 end
-                
                 Commandnode = cell2struct(G_data(:, i), commandfield_name , 1) ; 
-                
                 degree_com = Commandnode.Deg ; 
                 % if the candidate command node satisfies degree pricinple before/after filling current solution  
                 if (degree_out <  degree_com ) || (degree_out == degree_com && Commandnode.occupation < 0.999)
@@ -199,8 +168,6 @@ if ~isempty(Mappings_before)
 	max_fitness = max( fitness_all ); 
     if max_fitness > threshold  % selected 0.95 
         Outnode_Mappings = Outnode_Mappings(:, fitness_all >= greedy*max_fitness ) ; 
-        
-        
         % if exist the length of (sensor-input) pair smaller than degree_out, then non-validated   
         % because the input memory cannot be assigned with any values, else, the system is not specifed controlled 
         validated_mapping = [] ; 
@@ -219,9 +186,7 @@ if ~isempty(Mappings_before)
         
         Outnode_Mappings = Outnode_Mappings(:, validated_mapping) ; 
         
-        
-        
-         % unique the Outnode_Mappings 
+        % unique the Outnode_Mappings 
         try 
             all_command_permutations = reshape([Outnode_Mappings{2, :}],  length(Outnode_Mappings{2, 1} ), size(Outnode_Mappings, 2) )' ;  
         catch
@@ -247,7 +212,6 @@ if ~isempty(Mappings_before)
     else
         Outnode_Mappings = cell(5, 0 );
     end
-    
     % Outnode_Mappings are the mappings of Outaddr_pair, under all "Mappings_before"  
 else
     % do mapping without Mappings solutions exist 
@@ -264,20 +228,14 @@ else
         if (degree_out < degree_com) || (degree_out == degree_com && Commandnode.occupation < 0.999)
             continue;
         else
-%             if exist('unique_debugging.mat', "file")
-%                 load('unique_debugging.mat', 'Outaddrmappings') ;
-%             else
             Out2Com = Out2Com_mapping(partial_map, Outaddr_pair, G_data(:, i), data_raw, redundant_id, threshold, greedy) ; 
             Outaddrmappings = [Outaddrmappings, Out2Com] ; 
-%             end
         end
     end
-    % find the largest fitness among all input address combinations   
     fitness_all = [Outaddrmappings{5, :}] ; 
     max_fitness = max( fitness_all ); 
     if max_fitness > threshold  % selected 0.95 
         Outnode_Mappings = Outaddrmappings(:, fitness_all >= greedy*max_fitness ) ;     
-        
         % if exist the length of (sensor-input) pair smaller than degree_out, then non-validated   
         % because the input memory cannot be assigned with any values, else, the system is not specifed controlled 
         validated_mapping = [] ; 
@@ -321,7 +279,6 @@ else
     end
     
 end
-
 
 end
 

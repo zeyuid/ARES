@@ -1,6 +1,7 @@
 function G = graph_generation(sensor_id, command_id, E_s_u, plotchose)
 % % % generate the graph from E 
-% 
+
+
 if ~isempty(find (command_id(:, 1) == E_s_u{1, 1} ))
     parents = sensor_id(:, 1);
     kids = command_id(:, 1);
@@ -29,5 +30,7 @@ if plotchose
     figure()
     h = plot(G,'EdgeLabel',G.Edges.Weight);
 end
+
 end
+
 

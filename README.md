@@ -57,13 +57,12 @@ The construction of Gcross has two essential modules.
 1. Schedule the feasible mapping in a dynamic programming way (./ares/Graph_mapping.m). 
 
 	```
-	[Mappings, ~, ~] = Graph_mapping(G_code, G_data, data_for_mapping, redundant_id, constant_id, mapping_threshold, mapping_greedy, savefilepath, mapping_data_start);
+	[Mappings, ~, ~] = Graph_mapping(G_code, G_data, data_for_mapping, redundant_id, constant_id, mapping_threshold, mapping_greedy, savefilepath );
 
 	%%% exemplary parameters %%%
 	mapping_threshold = 0.95 ;
 	mapping_greedy = 1 ;
 	savefilepath = "./data/Graphs/Graphs_length7000_occup1_info_1.000000e-01/mapping_results"; 
-	mapping_data_start = 1 ; % for generating the storing path 
 	mapping_data_period = 1:7000 ; 
 	data_for_mapping = data_raw(mapping_data_period, :);
 	```
@@ -75,13 +74,12 @@ The construction of Gcross has two essential modules.
 	[OUTPUTS] = PLC_Twin_CORE(inputs, initialization); 
 	```
 
-
-## Examples <br>
-
-Example: 
-reverse-engineering physical semantics
-
-
+3. An integrated example for constructing the Gcross. 
+	
+	```
+	cd ./ares
+	mrun Mapping_Parameters_analysis_CENTOR.m 
+	```
 
 # Usages of Cross-domain invariants (the Gcross)
 

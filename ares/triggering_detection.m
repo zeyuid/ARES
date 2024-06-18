@@ -1,7 +1,5 @@
 function [trigger_time, persistent_time, UP_Pos, DOWN_Pos, DE_X] = triggering_detection(X, nodes)
-    % the previous output of "triggering_detection" is <UP_Pos, DOWN_Pos,
-    % DE_X, COUNT, trigger_time>, @20200628
-    % currently, the output of "triggering_detection" is <trigger_time, persistent_time>
+    % the output of "triggering_detection" is <trigger_time, persistent_time> 
     
     in = X(:, nodes); % x is column vector
     

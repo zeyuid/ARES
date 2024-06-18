@@ -27,3 +27,4 @@ function [H, sortData] = Entropy(data)
     
 end
 
+
