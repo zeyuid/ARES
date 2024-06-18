@@ -35,7 +35,9 @@ With the historical SCADA data, the developed graph construction generates causa
 The construction of Gdata consists of two basic modules. Specifically, <br>
 1. Identify the node set, using the defined ./ares/node_classification.m function. 
 	
+	```
 	[sensor_set, command_set, command_delayed_set, ~, ~, ~, redundant_id, constant_id] = node_classification(data_raw, threshold, input_num)
+	```
 
 2. Identify the edge set, using the defined ./ares/EdgeSetConstruction.m function. 
 
