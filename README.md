@@ -39,7 +39,7 @@ The construction of Gdata consists of two basic modules. Specifically,
 
 
 
-## Construct the G^{cross} <br>
+## Construct the $G^{cross}$ <br>
 With the identified Gcode and Gdata as inputs, the developed matching algorithm enumerates and validates all the feasible one-to-one mapping between PLC program variables and SCADA data variables. 
 
 
