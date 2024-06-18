@@ -33,16 +33,16 @@ Taking the PLC IL program as input, the developed parser generates the dependenc
 With the historical SCADA data, the developed graph construction generates causalities between sensor readings and control commands. 
 
 The construction of Gdata consists of two basic modules. Specifically, <br>
-1. Identify the node set, using the defined ./ares/node_classification.m function. 
+1. Identify the node set, using the defined function (./ares/node_classification.m). 
 	
 	```
-	use case:
+	examples:
 	load('./data_withoutattack/elevator_data_training.mat', 'data_raw'); 
 	threshold = 0.1;
 	[sensor_set, command_set, command_delayed_set, ~, ~, ~, redundant_id, constant_id] = node_classification(data_raw, threshold)
 	```
 
-2. Identify the edge set, using the defined ./ares/EdgeSetConstruction.m function. 
+2. Identify the edge set, using the defined function (./ares/EdgeSetConstruction.m). 
 	
 	```
 	[G_data, ~] = EdgeSetConstruction(data_raw(1:identify_length, :), sensor_set, command_set, command_delayed_set, redundant_id, info_delta_min,occupation_min, transferdelay, autocorrelation, tau)
@@ -50,7 +50,18 @@ The construction of Gdata consists of two basic modules. Specifically, <br>
 
 
 ## Construct the Gcross <br>
+
 With the identified Gcode and Gdata as inputs, the developed matching algorithm enumerates and validates all the feasible one-to-one mapping between PLC program variables and SCADA data variables. 
+
+The construction of Gcross has two essential modules. 
+1. Schedule the feasible mapping in a dynamic programming way (./ares/Graph_mapping.m). 
+
+	```
+	[Mappings, mapping_cyclic_num, ~] = Graph_mapping(G_code, G_data, data_mapping, redundant_id, constant_id, mapping_threshold, mapping_greedy, savefilepath , mapping_data_start)
+	```
+
+2. Validate the feasible mapping by calling the PLC-Twin (./ares/PLC_Twin_CORE.m). 
+
 
 
 ## Examples <br>

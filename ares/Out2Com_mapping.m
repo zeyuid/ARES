@@ -106,7 +106,7 @@ elseif length(In_addr_left) == length(Sensor_left)
         
         
         % run alwsim given the INPUTS  
-        OUTPUTS = IL_analyzer_CORE(INPUTS, initialization);
+        OUTPUTS = PLC_Twin_CORE(INPUTS, initialization);
         output_estimate = OUTPUTS(:, end - Outnode.OUT) ; % from the bottom direction 
         
         output_expected = data_raw(:, Commandnode.command ) ; 
@@ -281,7 +281,7 @@ function [Inaddr] = addr_sensor_enumarate(In_addr_left, In_addr_chosen, Sensor_l
                 initialization{2, 1} = data_raw(1, 26:46 ) ;
 
                 % run alwsim given the INPUTS  
-                OUTPUTS = IL_analyzer_CORE(INPUTS, initialization);
+                OUTPUTS = PLC_Twin_CORE(INPUTS, initialization);
                 output_estimate = OUTPUTS(:, end - Outnode.OUT) ; % from the bottom direction 
 
                 output_expected = data_raw(:, Commandnode.command ) ; 

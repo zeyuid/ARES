@@ -142,7 +142,7 @@ if ~isempty(Mappings_before)
 
             
             % run alwsim given the INPUTS  
-            OUTPUTS = IL_analyzer_CORE(INPUTS, initialization);
+            OUTPUTS = PLC_Twin_CORE(INPUTS, initialization);
             output_estimate = OUTPUTS(:, end - Outnode.OUT) ; % from the bottom direction 
             
             % only keep the diveristy of sensor permutaion, 

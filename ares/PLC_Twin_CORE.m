@@ -1,4 +1,4 @@
-function [output] = IL_analyzer_CORE(inputs, initialization)
+function [output] = PLC_Twin_CORE(inputs, initialization)
 % columns in X represent the arrangement of Input register address
 global cycle_time
 cycle_time = cycle_time +1 
