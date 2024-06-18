@@ -74,25 +74,26 @@ The construction of Gcross has two essential modules.
 	[OUTPUTS] = PLC_Twin_CORE(inputs, initialization); 
 	```
 
-3. An integrated example for constructing the Gcross. 
-	
+An integrated example for constructing the Gcross. 
+
 	```
 	cd ./ares
 	mrun Mapping_Parameters_analysis_CENTOR.m 
 	```
 
-# Online defense for semantic attacks (the Gcross)
+# Defense for ARES 
 
 ## Detect semantic attacks <br>
 
+1. offline detection.
 python ./data_segmentation/segmenting_utils.py
 
-Example: 
+2. online detection
+
 
 ## Respond to semantic attacks <br>
 
 The exploitation of "Force" function for Siemens PLC and Rockwell PLC is coming soon!
-
 
 
 
