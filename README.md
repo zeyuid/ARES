@@ -22,35 +22,57 @@ Reverse Engineering Physical Semantics of PLC Program Variables Using Control In
 
 		import ./hardware_interface/Opc
 		
-## Obtain the Gcode <br>
+## Construct the Gcode <br>
 Taking the PLC IL program as input, the developed parser generates the dependencies between input and output variables. <br>
 
 	cd ./STL_Parser
 	python -m core.main
 
-## Obtain the Gdata <br>
+## Construct the Gdata <br>
 
-With the historical SCADA data, the developed graph construction generates causalities between sensor readings and control commands
+With the historical SCADA data, the developed graph construction generates causalities between sensor readings and control commands. 
 
-python ./data_segmentation/segmenting_utils.py
+The construction of Gdata consists of two basic modules. Specifically, 
+	1). identify the node set
 
-## Obtain the Gcross <br>
+	2). identify the edge set
 
-python ./data_segmentation/segmenting_utils.py
+
+
+## Construct the Gcross <br>
+With the identified Gcode and Gdata as inputs, the developed matching algorithm enumerates and validates all the feasible one-to-one mapping between PLC program variables and SCADA data variables. 
+
+
+## Examples <br>
+
+Example: 
+reverse-engineering physical semantics
+
+
+
+# Usages of Cross-domain invariants 
+
+## Mount semantic attacks <br>
+
+The exploitation of "Force" function for Siemens PLC and Rockwell PLC is coming soon!
 
 ## Detect semantic attacks <br>
 
 python ./data_segmentation/segmenting_utils.py
 
+Example: 
+
+
+
 ## Respond semantic attacks <br>
 
-The response to semantic attacks utilizes the "Force" function of industrial communication protocols. However, the "Force" function may also be utilized by adversaries and further threaten the real critical infrastructure. For the legal and ethical considerations, the exploitation of "Force" function for Siemens PLC and Rockwell PLC will be published when the authentication weakness is fixed. 
+The exploitation of "Force" function for Siemens PLC and Rockwell PLC is coming soon!
 
 
 
-## Usages <br>
 
-Example #1: reverse-engineering physical semantics
+## Legal and Ethical Considerations <br>
 
-Example #2: detecting attacks
+<!-- The response to semantic attacks utilizes the "Force" function of industrial communication protocols. However,  -->
+The utilization of the "Force" function may be utilized by adversaries and further threaten the real critical infrastructure. For the legal and ethical considerations, the exploitation of "Force" function for Siemens PLC and Rockwell PLC will be published when the authentication weakness of protocols is fixed. 
 
