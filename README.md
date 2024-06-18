@@ -81,11 +81,7 @@ The construction of Gcross has two essential modules.
 	mrun Mapping_Parameters_analysis_CENTOR.m 
 	```
 
-# Usages of Cross-domain invariants (the Gcross)
-
-## Mount semantic attacks <br>
-
-The exploitation of "Force" function for Siemens PLC and Rockwell PLC is coming soon!
+# Online defense for semantic attacks (the Gcross)
 
 ## Detect semantic attacks <br>
 
@@ -100,8 +96,7 @@ The exploitation of "Force" function for Siemens PLC and Rockwell PLC is coming 
 
 
 
-# Legal and Ethical Considerations <br>
+## Legal and Ethical Considerations <br>
 
-<!-- The response to semantic attacks utilizes the "Force" function of industrial communication protocols. However,  -->
-The utilization of the "Force" function may be utilized by adversaries and further threaten the real critical infrastructure. For the legal and ethical considerations, the exploitation of "Force" function for Siemens PLC and Rockwell PLC will be published when the authentication weakness of protocols is fixed. 
+The response to semantic attacks makes use of the "Force" function of the industrial communication protocols. However, the "Force" function may also be utilized by adversaries, threatening the real industrial control systems. For the legal and ethical considerations, the exploitation of "Force" function will be published when the authentication weakness of protocols is fixed. 
 
