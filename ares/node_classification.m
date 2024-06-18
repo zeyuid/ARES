@@ -1,5 +1,5 @@
 % function [sensor_set, command_set, command_delayed_set, trigger_time, UP_Pos, DOWN_Pos, redundant_id, constant_id, laggings, laggings_UEntropy] = node_classification(data_raw, threshold)
-function [sensor_set, command_set, command_delayed_set, trigger_time, UP_Pos, DOWN_Pos, redundant_id, constant_id, laggings, laggings_UEntropy] = node_classification(data_raw, timer_command_threshold, input_num)
+function [sensor_set, command_set, command_delayed_set, trigger_time, UP_Pos, DOWN_Pos, redundant_id, constant_id, laggings, laggings_UEntropy] = node_classification(data_raw, timer_command_threshold)
 
 % preprocess the data logged from the discrete control system
 %   input: the path of .csv file, e.g., path = "./data/elevator0520_data"

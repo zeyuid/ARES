@@ -1,11 +1,6 @@
 clear
 
-trainning_data_path = './data_withoutattack/elevator_data20201110.mat' ; 
-data_version = '\d*';
-
-trainning_data_version = regexp(trainning_data_path, data_version, 'match') ;
-trainning_data_version=trainning_data_version{1};
-
+trainning_data_path = './data_withoutattack/elevator_data_training.mat' ; 
 
 mapping_greedy_list = [1] ;
 mapping_data_length_list = [7000] ; 

@@ -1,18 +1,13 @@
-function [E_x_y, W_x_y] = edgesearching(data_raw, X_id, Y_id, command_delayed_set, sensor_redundant_id, transferdelay, autocorrelation, tau, info_delta_min, occupation_min, direction)
+function [E_x_y, W_x_y] = edgesearching(data_raw, X_id, Y_id, command_delayed_set, sensor_redundant_id, transferdelay, autocorrelation, tau, info_delta_min, occupation_min )
 
 num_Y = size(Y_id, 1);
-
-% X_id_keep = X_id;
-% X_id = [Y_id ; X_id];
-% num_X = size(X_id, 1);
 num_X = size(X_id, 1); 
 
 E_x_y = cell(3, num_Y);
 W_x_y = zeros(num_X, num_Y );
 TE_x_y = zeros(num_X, num_Y );
 
-% search causal Xs for Y
-% X' majority are equals, during the mapping.
+% search causal Xs for Y 
 
 if length(transferdelay) == 1
     transferdelay = transferdelay*ones(length(Y_id), 1 );
@@ -27,11 +22,9 @@ end
 
 
 for i = 1 : num_Y
-%     tic;
     
     neighbors = [];
     weights = [];
-    info_delta = 1 ;
     occupation = 0 ;
     exclude_neighbors = [];
     Y_sample = Y_id(i, 1);
@@ -49,7 +42,7 @@ for i = 1 : num_Y
             else
                 [~, ~, ~, correled_pos, ~] = triggering_detection( data(:, Y_sample), 1 ) ;
             end
-            [trigger_time, persistent_time, UP_Pos, DOWN_Pos, DE_X] = triggering_detection( data(:, delayed_sensor), 1 ) ;
+            [~, ~, UP_Pos, DOWN_Pos, ~] = triggering_detection( data(:, delayed_sensor), 1 ) ;
             
             if length(intersect(correled_pos - command_delayed_set(r, end-1), UP_Pos)) > length(intersect(correled_pos - command_delayed_set(r, end-1), DOWN_Pos))
                 % means the rising edges of sensor is correlated 
@@ -67,23 +60,16 @@ for i = 1 : num_Y
     end
     
     
-    % calculate the whole information of the command, considering the direction
-%     [~, H_y] = TransferEntropy(data(:, X_id(:, 1)), data(:, Y_sample ), data(:, [] ), transferdelay(i), autocorrelation(i), tau(i), direction) ;
-    
-    
-    % calculate weight when all sensor are used, the distribution of sensor, using TE  
+    % calculate weight when all sensor are used, the distribution of sensor, using TransferEntropy 
     all_other_vars = setdiff(X_id(:, 1), Y_sample) ;
-    [whole_corr_info,~,whole_mutual_info] = TransferEntropy(data(:, all_other_vars ), data(:, Y_sample ), data(:, [] ), transferdelay(i), autocorrelation(i), tau(i), direction) ;
+    [whole_corr_info,~,whole_mutual_info] = TransferEntropy(data(:, all_other_vars ), data(:, Y_sample ), data(:, [] ), transferdelay(i), autocorrelation(i), tau(i) ) ;
     
-%     [test] = TransferEntropy(data(:, X_id(:, 1)), data(:, Y_sample ), data(:, [] ), 0, 1, 0,[]) ;
-    
-    % 
     % any unsatisfied condition will exit the loop
-    while occupation < occupation_min  % && info_delta > info_delta_min 
+    while occupation < occupation_min  
         
         for j = 1:num_X
             if isempty(find(exclude_neighbors == X_id(j, 1)))
-                TE_x_y(j , i) = TransferEntropy(data(:, X_id(j, 1)), data(:, Y_sample ), data(:, neighbors ), transferdelay(i), autocorrelation(i), tau(i), direction) ;
+                TE_x_y(j , i) = TransferEntropy(data(:, X_id(j, 1)), data(:, Y_sample ), data(:, neighbors ), transferdelay(i), autocorrelation(i), tau(i) ) ;
                 W_x_y(j , i) = TE_x_y(j , i)/whole_corr_info;
             else
                 TE_x_y(j , i) = 0;
@@ -116,7 +102,7 @@ for i = 1 : num_Y
             
             % update the weight when given other neighbors
             while length(neighbors) ~= length(weights)
-                [neighbors, weights, exclude_neighbor] = weights_update(data, neighbors, sensor_redundant_id, Y_sample, whole_corr_info,info_delta_min, transferdelay(i), autocorrelation(i), tau(i), direction );
+                [neighbors, weights, exclude_neighbor] = weights_update(data, neighbors, sensor_redundant_id, Y_sample, whole_corr_info,info_delta_min, transferdelay(i), autocorrelation(i), tau(i) );
                 if ~isempty(find(neighbors==0))
                 
                     if isempty(find(neighbors~=0))
@@ -130,7 +116,7 @@ for i = 1 : num_Y
             end
             
             
-            [~,~,occupation_raw] = TransferEntropy(data(:, neighbors ), data(:, Y_sample ), data(:, [] ), transferdelay(i), autocorrelation(i), tau(i), direction) ;
+            [~,~,occupation_raw] = TransferEntropy(data(:, neighbors ), data(:, Y_sample ), data(:, [] ), transferdelay(i), autocorrelation(i), tau(i) ) ;
             occupation = occupation_raw/whole_mutual_info;
             
         else
@@ -142,11 +128,8 @@ for i = 1 : num_Y
     E_x_y{1, i} = Y_sample;
     E_x_y{2, i} = neighbors;
     E_x_y{3, i} = weights;
-    E_x_y{4, i} = occupation * whole_mutual_info ; % the proportion of info. the chosen sensors have, comparing with the all sensors have. under the autocorrelation(i) condition  
-    E_x_y{5, i} = length(neighbors);
-    
-    % % information that all sensors and one-delayed commands can provide 
-    % E_x_y{5, i} = whole_mutual_info ; % the proportion that, info. theory has, 1 autocorrelation    
+    E_x_y{4, i} = occupation * whole_mutual_info ; % the proportion of the information that the chosen sensors have, comparing with all sensors. 
+    E_x_y{5, i} = length(neighbors); 
     
 end
 % sort E_x_y as the node degree increase 
@@ -155,7 +138,7 @@ E_x_y = sortrows(E_x_y',5)' ;
 end
 
 
-function [neighbors, weights, exclude_neighbors] = weights_update(data, neighbors, sensor_redundant_id, Y_sample, whole_info, info_delta_min, transferdelay, autocorrelation, tau, direction )
+function [neighbors, weights, exclude_neighbors] = weights_update(data, neighbors, sensor_redundant_id, Y_sample, whole_info, info_delta_min, transferdelay, autocorrelation, tau )
 % update the weight when given other neighbors
 for jj = 1:length(neighbors)
     noncoorelated_neighbots = [];
@@ -166,17 +149,16 @@ for jj = 1:length(neighbors)
         redundant_neighbors = sensor_redundant_id (row,:);
         TE_s_u_prime = [];
         for jjj = 1: length(redundant_neighbors)
-            TE_s_u_prime(jjj) = TransferEntropy(data(:, redundant_neighbors(jjj) ), data(:, Y_sample ), data(:, noncoorelated_neighbots ),  transferdelay, autocorrelation, tau, direction) ;
+            TE_s_u_prime(jjj) = TransferEntropy(data(:, redundant_neighbors(jjj) ), data(:, Y_sample ), data(:, noncoorelated_neighbots ),  transferdelay, autocorrelation, tau ) ;
         end
         TE_x_y = max(TE_s_u_prime) ;
     else
         noncoorelated_neighbots = setdiff( neighbors , neighbors(jj) );
-        TE_x_y = TransferEntropy(data(:, neighbors(jj) ), data(:, Y_sample ), data(:, noncoorelated_neighbots ),  transferdelay, autocorrelation, tau, direction) ;
+        TE_x_y = TransferEntropy(data(:, neighbors(jj) ), data(:, Y_sample ), data(:, noncoorelated_neighbots ),  transferdelay, autocorrelation, tau ) ;
     end
     weights(jj) = TE_x_y / whole_info;
 end
 
-% info_delta_min = 0.02;
 exclude_neighbors = neighbors( weights < info_delta_min );
 neighbors(weights < info_delta_min) = 0;
 
