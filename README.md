@@ -32,11 +32,12 @@ Taking the PLC IL program as input, the developed parser generates the dependenc
 
 With the historical SCADA data, the developed graph construction generates causalities between sensor readings and control commands. 
 
-The construction of Gdata consists of two basic modules. Specifically, 
-	1). identify the node set
+The construction of Gdata consists of two basic modules. Specifically, <br>
 
+	1). identify the node set 
+	xxx
 	2). identify the edge set
-
+	xxxx
 
 
 ## Construct the Gcross <br>
@@ -50,7 +51,7 @@ reverse-engineering physical semantics
 
 
 
-# Usages of Cross-domain invariants (Gcross)
+# Usages of Cross-domain invariants (the Gcross)
 
 ## Mount semantic attacks <br>
 
@@ -62,16 +63,14 @@ python ./data_segmentation/segmenting_utils.py
 
 Example: 
 
-
-
-## Respond semantic attacks <br>
+## Respond to semantic attacks <br>
 
 The exploitation of "Force" function for Siemens PLC and Rockwell PLC is coming soon!
 
 
 
 
-## Legal and Ethical Considerations <br>
+# Legal and Ethical Considerations <br>
 
 <!-- The response to semantic attacks utilizes the "Force" function of industrial communication protocols. However,  -->
 The utilization of the "Force" function may be utilized by adversaries and further threaten the real critical infrastructure. For the legal and ethical considerations, the exploitation of "Force" function for Siemens PLC and Rockwell PLC will be published when the authentication weakness of protocols is fixed. 
