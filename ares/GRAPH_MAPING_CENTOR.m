@@ -64,9 +64,9 @@ end
 %%%%%%%% solution selcetion threshold, which doesn't affect the mapping results, but save the storing space when mapping
 %%%%%%%% greedy, if set as 1, then totally greedy
 
-data_mapping = data_raw( mapping_data_period, :) ; 
+data_for_mapping = data_raw( mapping_data_period, :) ; 
 tic ;
-[Mappings, mapping_cyclic_num, mappings_files_path] = Graph_mapping(G_code, G_data, data_mapping, redundant_id, constant_id, mapping_threshold, mapping_greedy, savefilepath , mapping_data_start) ;
+[Mappings, mapping_cyclic_num, mappings_files_path] = Graph_mapping(G_code, G_data, data_for_mapping, redundant_id, constant_id, mapping_threshold, mapping_greedy, savefilepath , mapping_data_start) ;
 toc ;
 
 fid = fopen(mappings_files_path+'cyclic_number_logs.txt', 'a') ;

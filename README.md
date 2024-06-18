@@ -57,11 +57,23 @@ The construction of Gcross has two essential modules.
 1. Schedule the feasible mapping in a dynamic programming way (./ares/Graph_mapping.m). 
 
 	```
-	[Mappings, mapping_cyclic_num, ~] = Graph_mapping(G_code, G_data, data_mapping, redundant_id, constant_id, mapping_threshold, mapping_greedy, savefilepath , mapping_data_start)
+	[Mappings, ~, ~] = Graph_mapping(G_code, G_data, data_for_mapping, redundant_id, constant_id, mapping_threshold, mapping_greedy, savefilepath, mapping_data_start);
+
+	%%% exemplary parameters %%%
+	mapping_threshold = 0.95 ;
+	mapping_greedy = 1 ;
+	savefilepath = "./data/Graphs/Graphs_length7000_occup1_info_1.000000e-01/mapping_results"; 
+	mapping_data_start = 1 ; % for generating the storing path 
+	mapping_data_period = 1:7000 ; 
+	data_for_mapping = data_raw(mapping_data_period, :);
 	```
-
 2. Validate the feasible mapping by calling the PLC-Twin (./ares/PLC_Twin_CORE.m). 
-
+	
+	```
+	% *inputs* are the verifying sensor readings  
+	% *initialization* is the first record of the SCADA logs to initializing the PLC-Twin  
+	[OUTPUTS] = PLC_Twin_CORE(inputs, initialization); 
+	```
 
 
 ## Examples <br>
