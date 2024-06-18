@@ -33,11 +33,13 @@ Taking the PLC IL program as input, the developed parser generates the dependenc
 With the historical SCADA data, the developed graph construction generates causalities between sensor readings and control commands. 
 
 The construction of Gdata consists of two basic modules. Specifically, <br>
+1. Identify the node set, using the defined ./ares/node_classification.m function. 
+	
+	[sensor_set, command_set, command_delayed_set, ~, ~, ~, redundant_id, constant_id] = node_classification(data_raw, threshold, input_num)
 
-	1). identify the node set 
-	xxx
-	2). identify the edge set
-	xxxx
+2. Identify the edge set, using the defined ./ares/EdgeSetConstruction.m function. 
+
+	[G_data, ~] = EdgeSetConstruction(data_raw(1:identify_length, :), sensor_set, command_set, command_delayed_set, redundant_id, info_delta_min,occupation_min, transferdelay, autocorrelation, tau)
 
 
 ## Construct the Gcross <br>
