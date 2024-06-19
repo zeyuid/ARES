@@ -104,18 +104,25 @@ We show one use case of the developed attack detection for our [Elevator Control
 3. Build the attack detection on PLC-Twin, including <br>
 
 	1). A setup interface (./detection/Elevator_300project.awlpro) <br>
+		
 		```
 		python awlsim-server Elevator_300project.awlpro
 		```
+
 	2). A revised awlsimhw_debug module (./detection/awlsimhw_debug/main.py) <br>
+		
 		```
 		will be loaded automatically
 		```
+
 	3). A data acquisition interface using opc (./detection/awlsimhw_debug/readOpc.py) <br>
+		
 		```
 		will be loaded automatically
 		```
+
 	4). Other utilities for data reading and conversion (./detection/utilsConvert/utilsConvert.py) <br>
+		
 		```
 		will be loaded automatically
 		```
