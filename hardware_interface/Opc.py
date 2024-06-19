@@ -15,7 +15,7 @@ class Opc():
     def close(self):
         self.opc.close()
 
-    # return list for read names (Integer)
+    # return list for read names 
     def read(self):
         if self.read_name_list == None:
             logging.error("Give specific read grp first")
@@ -40,3 +40,4 @@ class Opc():
     
     def set_write_list(self, write_name_list):
         self.write_name_list = write_name_list
+
