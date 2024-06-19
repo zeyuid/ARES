@@ -5,10 +5,8 @@ import numpy as np
 from scipy.io import loadmat, savemat
 import json
 
-
-
 def sourceIsFlat(cls, sourceText):
-    """Returns whether the source is 'flat'.
+    """Return whether the source is 'flat'.
     A flat source is one without block definitions and
     just plain AWL code."""
     haveDB = re.match(r'.*^\s*DATA_BLOCK\s+.*', sourceText,
@@ -33,7 +31,6 @@ def read_file_as_str(file_name):
         raise TypeError(file_path + " does not exist")
 
     all_the_text = open(file_path).read()
-    # print(all_the_text)
     return all_the_text
 
 
@@ -56,11 +53,7 @@ def network_function_search(network_file):
     line_seg = re.split('\n', network_file)
 
     for var in range(len(line_seg)):
-        # if the instruction includes '=|S|R|T|MOVE|call', induced-variable exists in it.
-        #
         variable = re.split(r'=|S|R|T|MOVE|call', line_seg[var], flags=re.M | re.I)
-        # induced_var__ = re.search(r'\s*(=)(.+)\s*', line_seg[var])
-        # induced_var__ = re.search(r'\s*([=SDTRcallMOVE])(.+)\s*',line_seg[var])
         if len(variable) > 1:  # if the instrction exists
             induced_var = variable[1].replace(" ", "")
             induced_var_abs_A = re.search(r'(\s*[QIM]\d+\.[0-7])|(\s*[QIM][BWD]\d+\.[0-7])|(\s*[QIM][BWD]\d+)\s*',
@@ -89,28 +82,21 @@ def network_function_search(network_file):
                 # remove self correlation, if it exists
                 if induced_var_abs_C.group() in factor_variable_set_indirectly:
                     network_induced_relation_indirectly[induced_var_abs_C.group()].remove(induced_var_abs_C.group())
-
         else:
-            # if the instruction doesn't include the induced-variable,
-            # search the self-vabriation-variable.
+            # if the instruction doesn't include the induced-variable, search the self-vabriation-variable.
             factor_var = variable[0].replace(" ", "")
             factor_var_abs = re.search(r'(\s*[I])([0-9]+\.[0-7])\s*', factor_var)
             if factor_var_abs:
                 factor_variable_set_directly.append(factor_var_abs.group())
-                # print(factor_variable_set_directly)
             else:
-                # then using other area (QM) to abstract address
                 factor_var_abs = re.search(r'(\s*[QM]\d+\.[0-7])|(\s*MD\d+\.[0-7])|(\s*MD\d+)\s*', factor_var)
                 if factor_var_abs:
                     factor_variable_set_indirectly.append(factor_var_abs.group())
-                    # print(factor_variable_set_indirectly)
                 else:
                     # at last, using DB to abstract address
                     factor_var_abs = re.search(r'(\s*DB\d+.DB[XBWD])(\d+\.[0-7])\s*', factor_var)
-                    # factor_var_abs = re.search(r'(\s*DB[0-9]+.DB[XBWD])([0-9]+\.[0-7])\s*', factor_var)
                     if factor_var_abs:
                         factor_variable_set_indirectly.append(factor_var_abs.group())
-                        # print(factor_variable_set_indirectly)
                     else:
                         pass
 
@@ -142,7 +128,6 @@ def STL_function_search(networks, Blk_name="OB 1"):
                 if not Blk == "OB1":
                     Block_STL_induced_relation[var].add(Blk)
                     Block_STL_induced_relation_indirectly[var].add(Blk)
-
             else:
                 # case 3: indirectly correlated variables exist;
                 if network_relation_indirectly[var]:
@@ -184,7 +169,6 @@ def Recursively_loop(STL_induced_relation, STL_induced_relation_indirectly, STL_
         if cycle == 1 and ("FC" not in var):
             # in the first cyclic loop, update address with padding addresses
             Addr_Padding = address_padding(var)
-            # then do the for loop cycle
             for addr_pad in Addr_Padding:
                 if addr_pad in STL_induced_relation:
                     # if the in_var is in the invar_updated_table, then do query; else, search
@@ -202,12 +186,8 @@ def Recursively_loop(STL_induced_relation, STL_induced_relation_indirectly, STL_
                 # find in_var itself's variable
                 if in_var in STL_induced_relation:
                     # if the in_var is in the invar_updated_table, then do query; else, search
-                    # add .union(induced_updated_table[in_var]) @20201126
+                    # add .union(induced_updated_table[in_var]) 
                     induced_variables = STL_induced_relation[in_var]
-                    # if in_var in STL_induced_relation_indirectly:
-                    #     induced_variables = induced_variables.union(STL_induced_relation_indirectly[in_var])
-                    # if in_var in induced_updated_table:
-                    #     induced_variables = induced_variables.union(induced_updated_table[in_var])
 
                     for var_up in induced_variables:
                         if not _Iaddress.search(var_up):
@@ -220,25 +200,8 @@ def Recursively_loop(STL_induced_relation, STL_induced_relation_indirectly, STL_
                     indir_var_update.add("False")
                     induced_updated_table[in_var] = {"False"}
                     STL_false_address[in_var] = {"False"}
-
-                # # replace in_var with its correlated address, as the following steps:
-                # # first call the address correlation function.
-                # if "FC" not in in_var:
-                #     Addr_Padding = address_padding(in_var)
-                #     # then do the for loop cycle
-                #     for addr_pad in Addr_Padding:
-                #         if addr_pad in STL_induced_relation:
-                #             # if the in_var is in the invar_updated_table, then do query; else, search
-                #             for var_up in STL_induced_relation[addr_pad]:
-                #                 if not _Iaddress.search(var_up):
-                #                     indir_var_update.add(var_up)
-                #                 else:
-                #                     induced_var_update.add(var_up)
-
             else:
                 pass
-                # induced_var_update.add("False")
-
 
         induced_var_update = induced_var_update.union(indir_var_update)
         # update the STL_induced_relation_indirectly
@@ -249,9 +212,6 @@ def Recursively_loop(STL_induced_relation, STL_induced_relation_indirectly, STL_
 
         # update the STL_induced_relation
         induced_updated_table[var] = induced_var_update
-        # # add in 20101126
-        # STL_induced_relation[var] = invar_updated_table[var]
-
 
     return induced_updated_table, invar_updated_table, STL_false_address
 
@@ -280,10 +240,6 @@ def address_padding(addr):
         Addr_B_tmp = re.compile(r"(?P<Area>.)B(?P<Byte>\d+)", re.S)
         AddrObj = Addr_B_tmp.search(addr)
         if AddrObj:
-            # for off in X_off:
-            #     correlated_addr.add(AddrObj["Area"] + AddrObj["Byte"] + ".{}".format(off))
-            # for off in B_off:
-            #     correlated_addr.add(AddrObj["Area"] + "B" + str(max(0, int(AddrObj["Byte"]) - off)))
             for off in W_off:
                 correlated_addr.add(AddrObj["Area"] + "W" + str(max(0, int(AddrObj["Byte"]) - off)))
             for off in D_off:
@@ -293,10 +249,6 @@ def address_padding(addr):
             Addr_W_tmp = re.compile(r"(?P<Area>.)W(?P<Byte>\d+)", re.S)
             AddrObj = Addr_W_tmp.search(addr)
             if AddrObj:
-                # for off in X_off:
-                #     correlated_addr.add(AddrObj["Area"] + AddrObj["Byte"] + ".{}".format(off))
-                # for off in B_off:
-                #     correlated_addr.add(AddrObj["Area"] + "B" + str(max(0, int(AddrObj["Byte"]) - off)))
                 for off in W_off:
                     correlated_addr.add(AddrObj["Area"] + "W" + str(max(0, int(AddrObj["Byte"]) - off)))
                 for off in D_off:
@@ -306,21 +258,13 @@ def address_padding(addr):
                 Addr_D_tmp = re.compile(r"(?P<Area>.)D(?P<Byte>\d+)", re.S)
                 AddrObj = Addr_D_tmp.search(addr)
                 if AddrObj:
-                    # for off in X_off:
-                    #     correlated_addr.add(AddrObj["Area"] + AddrObj["Byte"] + ".{}".format(off))
-                    # for off in B_off:
-                    #     correlated_addr.add(AddrObj["Area"] + "B" + str(max(0, int(AddrObj["Byte"]) - off)))
-                    # for off in W_off:
-                    #     correlated_addr.add(AddrObj["Area"] + "W" + str(max(0, int(AddrObj["Byte"]) - off)))
                     for off in D_off:
                         correlated_addr.add(AddrObj["Area"] + "D" + str(max(0, int(AddrObj["Byte"]) - off)))
                 else:
                     print("Wrong address format!!")
 
-    # correlated_addr = set(correlated_addr)
     if addr in correlated_addr:
         correlated_addr.remove(addr)
-    # print(correlated_addr)
 
     return correlated_addr
 
@@ -331,16 +275,9 @@ def Recursively_search(STL_induced_relation, STL_induced_relation_indirectly, ST
     while condition:
         STL_induced_relation, STL_induced_relation_indirectly, STL_false_address = Recursively_loop(
             STL_induced_relation, STL_induced_relation_indirectly, STL_false_address, cycle=cycle)
-
-        # for k, v in STL_induced_relation.items():
-        #     print(k, v)
-        # print("\n")
-        # for k, v in STL_induced_relation_indirectly.items():
-        #     print(k, v)
-
+        
         sets = list(STL_induced_relation_indirectly.values())
         condition = any([s if (len(s) > 0) else False for s in sets])
-        # condition = any([s if (len(s) > 0 and s != {"False"}) else False for s in sets])
         cycle = cycle + 1
 
     print("\nIO map obtained, \nSearch times: {}".format(cycle))
@@ -383,10 +320,6 @@ def STL_function_search_init(sourcefile):
         STL_induced_relation.update(block_induced_relation)
         STL_induced_relation_indirectly.update(block_induced_relation_indirectly)
 
-    # networks = network_segmentation(sourcefile)
-    # STL_induced_relation, STL_induced_relation_indirectly = STL_function_search(networks)
-    # ## obtain the STL_induced_relation, STL_induced_relation_indirectly at the first time
-
     print("\nObtaining the initial IO mapping ...  \nSTL_induced_relation:")
     for k, v in STL_induced_relation.items():
         print("Output {} : Input {}".format(k, v))
@@ -397,36 +330,22 @@ def STL_function_search_init(sourcefile):
 
 def save_mapping_file(dictionary, STL_indirectly_relation_init, file_path="./example/", file_name="test.json"):
 
-    # save_mapping_file(IO_Map, file_name="elevator_IO")
-    # saving_file = open("./examples/"+file_name+".txt", 'w')
-
-    # for k, v in dictionary.items():
-    #     saving_file.write(k +":" + str(v))
-    #     saving_file.write('\n')
-    # saving_file.close()
-
     _Iaddress = re.compile(r'(\s*[I]\d+\.[0-7])\s*')
     _Qaddress = re.compile(r'(\s*[Q]\d+\.[0-7])\s*')
     _Maddress = re.compile(r'(\s*[M]\d+\.[0-7])|(\s*MD\d+\.[0-7])|(\s*MD\d+)\s*')
     _DBaddress = re.compile(r'(\s*DB\d+.DB[XBWD])(\d+\.[0-7])\s*')
 
-    # if not os.path.exists(file_path):
-    #     os.makedirs(file_path)
     diction = {}
     print("\nSTL_induced_relation:")
     for k, v in dictionary.items():
         if _Qaddress.search(k):
-            # diction[k] = list(v)
             variables = v
-
             indirectly_relation = STL_indirectly_relation_init[k]
             for var_indirect in indirectly_relation:
                 if var_indirect in dictionary:
                     variables = variables.union(dictionary[var_indirect])
-                    # diction[k].append(dictionary[var_indirect])
 
             diction[k] = list(variables)
-
             print("Output {} : Input {}".format(k, diction[k]))
 
     with open(file_path + file_name + ".json", 'w') as f:
@@ -444,3 +363,4 @@ IO_Map, STL_relation_indirectly, constant_variables_map = Recursively_search(STL
 
 
 save_mapping_file(IO_Map, STL_induced_relation_indirectly, file_path="./examples/", file_name="{}_{}".format("elevator_project", "IO"))
+
