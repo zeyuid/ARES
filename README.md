@@ -6,10 +6,10 @@ Unveiling Physical Semantics of PLC Variables Using Control Invariants
 1. Software PLC is developed based on [Awlsim - S7 compatible Programmable Logic Controller](https://github.com/mbuesch/awlsim).
 
 	The modifications include: <br>
-	1). Supplemented a Process mimicking module (./awlsim/Process_mimic) which should be stored at the root. <br>
-	2). Revised the original debugging module (./awlsim/awlsimhw_debug) to support the PLC memory state acquisition and online attack detection. <br>
-	3). Supplemented an interface of PLC simulation (./awlsim/Elevator_300project.awlpro) to support the quick rebooting of the PLC execution. <br>
-	4). Revised original functions of Awlsim (such as the .awlsim/core/hardware.py) to define the data interface of ./awlsim/Process_mimic module. <br>
+	1). Supplementing a Process mimicking module (./awlsim/Process_mimic) which should be stored at the root. <br>
+	2). Revising the original debugging module (./awlsim/awlsimhw_debug) to support the PLC memory state acquisition and online attack detection. <br>
+	3). Supplementing an interface of PLC simulation (./awlsim/Elevator_300project.awlpro) to support the quick rebooting of the PLC execution. <br>
+	4). Revising original functions of Awlsim (such as the .awlsim/core/hardware.py) to define the data interface of ./awlsim/Process_mimic module. <br>
 		
 		cd ./awlsim
 		python awlsim-server Elevator_300project.awlpro
@@ -52,7 +52,7 @@ The construction of Gdata consists of two basic modules. Specifically, <br>
 
 ## Construct Gcross <br>
 
-With the identified Gcode and Gdata as inputs, the developed matching algorithm enumerates and validates all the feasible one-to-one mapping between PLC program variables and SCADA data variables. 
+With the identified Gcode and Gdata, the developed matching algorithm enumerates and validates all the feasible one-to-one mapping between PLC program variables and SCADA data variables. 
 
 The construction of Gcross has two essential modules. 
 1. Schedule the feasible mapping in a dynamic programming way (./ares/Graph_mapping.m). 
@@ -84,7 +84,7 @@ An integrated example for constructing the Gcross.
 # Defense to ARES 
 
 ## Detect semantic attacks <br>
-The implementation of online detection relies on the detailed information of ICS devices/software. 
+Implementing real-time detection for industrial control systems relies on detailed information on the devices/software. 
 We showcase the deployment of designed attack detection in our [Elevator Control System (ECS)](https://dl.acm.org/doi/10.1145/3560905.3568521), based on the PLC-Twin. 
 
 1. Prepare the ICS detection environment. <br>
@@ -150,5 +150,4 @@ The exploitation of "Force" function for Siemens PLC and Rockwell PLC is coming 
 
 ## Legal and Ethical Considerations <br>
 
-The response to semantic attacks is based on the "Force" function of the industrial communication protocols. However, the "Force" function may also be utilized by adversaries, threatening the real industrial control systems. For the legal and ethical considerations, the exploitation of "Force" function will be published when the authentication weakness of protocols is fixed. 
-
+The response to semantic attacks is built based on the "Force" function of the industrial communication protocols. However, the "Force" function may also be utilized by adversaries, threatening the real industrial control systems. For legal and ethical considerations, the exploitation of the "Force" function will be published when the authentication weakness of protocols is fixed. 
