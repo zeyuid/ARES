@@ -1,0 +1,24 @@
+from awlsim.common.cython_support cimport *
+from awlsim.core.memory cimport *
+from awlsim.core.offset cimport *
+
+cdef struct LStackFrame:
+	uint32_t byteOffset
+	uint32_t allocBits
+	LStackFrame *prevFrame
+
+cdef class LStackAllocator(object):
+	cdef public AwlMemory memory
+	cdef public uint32_t maxAllocBits
+	cdef public uint32_t globAllocBits
+
+	cdef LStackFrame *topFrame
+	cdef public AwlOffset topFrameOffset
+
+	cdef resize(self, uint32_t maxAllocBytes)
+	cdef void reset(self)
+
+	cdef void enterStackFrame(self)
+	cdef void exitStackFrame(self)
+
+	cdef AwlOffset alloc(self, uint32_t nrBits)

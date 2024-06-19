@@ -1,0 +1,33 @@
+from awlsim.common.cython_support cimport *
+from awlsim.core.lstack cimport *
+
+cdef class Block(object):
+	cdef public int32_t index
+	cdef public object sourceRef
+	cdef public object __identHash
+
+cdef class CodeBlock(Block):
+	cdef public _Bool isOB
+	cdef public _Bool isFC
+	cdef public _Bool isFB
+	cdef public _Bool isSystemBlock
+	cdef public _Bool isLibraryBlock
+
+	cdef public list insns
+	cdef public uint32_t nrInsns
+	cdef public list labels
+	cdef public uint32_t nrLabels
+	cdef public object interface
+	cdef public uint32_t tempAllocation
+
+cdef class StaticCodeBlock(CodeBlock):
+	pass
+
+cdef class OB(CodeBlock):
+	cdef public LStackAllocator lstack
+
+cdef class FB(CodeBlock):
+	pass
+
+cdef class FC(CodeBlock):
+	pass

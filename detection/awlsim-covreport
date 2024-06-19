@@ -1,0 +1,97 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+#
+# AWL simulator - Code coverage trace report generator
+#
+# Copyright 2018 Michael Buesch <m@bues.ch>
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+#
+
+from __future__ import division, absolute_import, print_function, unicode_literals
+
+import sys
+import os
+import coverage as coverage_mod
+
+
+def usage(f=sys.stdout):
+	print("Awlsim code coverage report generator", file=f)
+	print("", file=f)
+	print("Usage: awlsim-covreport REPORTDIR DATASOURCE [DATASOURCE ...]", file=f)
+	print("", file=f)
+	print("REPORTDIR is the target directory where "
+	      "the HTML report will be written to.", file=f)
+	print("DATASOURCE is a Python coverage data file or a directory "
+	      "containing only coverage data files.", file=f)
+
+try:
+	covReport = sys.argv[1]
+	covData = sys.argv[2:]
+	if not covData:
+		raise IndexError
+
+	dataPaths = []
+	for item in covData:
+		if os.path.isdir(item):
+			for subItem in os.listdir(item):
+				dataPaths.append(os.path.join(item, subItem))
+		else:
+			dataPaths.append(item)
+except IndexError as e:
+	usage(f=sys.stderr)
+	sys.exit(1)
+
+try:
+	cov = coverage_mod.Coverage(config_file=False)
+
+	# Define some exclude patterns
+	cov.exclude(r"#@nocov")
+	cov.exclude(r"assert\(0\)")
+	cov.exclude(r"if 0:")
+	cov.exclude(r"if False:")
+	cov.exclude(r"raise AwlSimBug")
+	cov.exclude(r"raise NotImplementedError")
+	cov.exclude(r"raise RuntimeError")
+	cov.exclude(r"pass\s*#\s*TODO")
+	cov.exclude(r'raise AwlSimError\("Assertion failed"\)')
+	cov.exclude(r'except UnicodeError')
+	cov.exclude(r'if isPyPy')
+	cov.exclude(r'if isJython')
+	cov.exclude(r'if isIronPython')
+	cov.exclude(r'if isCython')
+	cov.exclude(r'if isMicroPython')
+	cov.exclude(r'if isWinStandalone')
+	cov.exclude(r'XmlFactory\.parser_beginTag\(self, tag\)')
+	cov.exclude(r'XmlFactory\.parser_endTag\(self, tag\)')
+	cov.exclude(r'XmlFactory\.parser_data\(self, data\)')
+
+	# Combine all data files
+	cov.combine(data_paths=dataPaths, strict=True)
+
+	# Generate the HTML report
+	cov.html_report(directory=covReport)
+
+	# Fixup the report CSS
+	with open(os.path.join(covReport, "style.css"), "rb+") as f:
+		data = f.read()
+		data = data.replace(b"#ffdddd", b"#ff0000")
+		f.write(data)
+
+except (coverage_mod.misc.CoverageException, OSError) as e:
+	print("Could not generate coverage report: " + str(e),
+	      file=sys.stderr)
+	sys.exit(1)
+sys.exit(0)

@@ -1,0 +1,48 @@
+from awlsim.common.cython_support cimport *
+from awlsim.core.offset cimport *
+from awlsim.core.instructions.main cimport *
+from awlsim.core.memory cimport *
+
+cdef class AwlOperator(object):
+	cdef public uint32_t operType
+	cdef public int32_t width
+	cdef public AwlInsn insn
+
+	# The operator value. Only one of these is used.
+	cdef public AwlOffset offset
+	cdef public uint32_t immediate
+	cdef public bytearray immediateBytes
+	cdef public Pointer pointer
+
+	cdef public _Bool isExtended
+	cdef public uint32_t labelIndex
+	cdef public uint32_t interfaceIndex
+	cdef public _Bool compound
+	cdef public object dataType
+
+	cdef void _cy_init(self)
+
+	cdef _Bool __eq(self, AwlOperator other)
+
+	cpdef AwlOperator dup(self)
+	cdef _Bool isImmediate(self)
+	cdef AwlOperator resolve(self, _Bool store)
+	cdef uint32_t makePointerValue(self) except? 0xFFFFFFFF
+
+cdef AwlOperator make_AwlOperator(uint32_t operType, int32_t width,
+				   AwlOffset offset, AwlInsn insn)
+
+cdef class AwlIndirectOp(AwlOperator):
+	cdef public uint64_t area
+	cdef public uint32_t addressRegister
+	cdef public AwlOperator offsetOper
+
+	cpdef AwlOperator dup(self)
+	cdef AwlOperator resolve(self, _Bool store)
+	cdef uint32_t makePointerValue(self) except? 0xFFFFFFFF
+
+cdef AwlIndirectOp make_AwlIndirectOp(uint64_t area,
+				      int32_t width,
+				      uint32_t addressRegister,
+				      AwlOperator offsetOper,
+				      AwlInsn insn)

@@ -1,0 +1,21 @@
+from awlsim.common.cython_support cimport *
+
+cdef class S7StatusWord(object):
+	cdef _Bool NER
+	cdef _Bool VKE
+	cdef _Bool STA
+	cdef _Bool OR
+	cdef _Bool OS
+	cdef _Bool OV
+	cdef _Bool A0
+	cdef _Bool A1
+	cdef _Bool BIE
+
+	cdef __eq(self, object other)
+	cdef ExBool_t getByBitNumber(self, uint8_t bitNumber) except ExBool_val
+	cdef void reset(self)
+	cdef uint16_t getWord(self)
+	cdef void setWord(self, uint16_t word)
+	cdef dup(self)
+	cdef void setForFloatingPoint(self, double pyFloat)
+	cdef void setForFloatingPointDWord(self, uint32_t dword)

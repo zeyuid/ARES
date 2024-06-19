@@ -1,0 +1,43 @@
+from awlsim.common.cython_support cimport *
+from awlsim.core.hardware cimport *
+
+cdef class HardwareInterface_PiXtend(AbstractHardwareInterface):
+	cdef public object __pixtend_class
+	cdef public object __pixtend
+	cdef public _Bool __pixtendInitialized
+	cdef public _Bool __isV2
+	cdef public _Bool __testMode
+	cdef public list __relays
+	cdef public list __DOs
+	cdef public list __DIs
+	cdef public list __GPIO_out
+	cdef public list __GPIO_in
+	cdef public list __temps
+	cdef public list __hums
+	cdef public list __AIs
+	cdef public list __AOs
+	cdef public list __PWM0s
+	cdef public list __PWM1s
+	cdef public list __allOutputs
+	cdef public list __allProcOutputs
+	cdef public list __allInputs
+	cdef public list __allProcInputs
+	cdef public _Bool __haveInputData
+	cdef public uint32_t __outBase
+	cdef public uint32_t __outSize
+	cdef public uint32_t __inBase
+	cdef public uint32_t __inSize
+	cdef public dict __byteOffsetToInput
+	cdef public dict __byteOffsetToOutput
+	cdef public double __pollInt
+	cdef public double __nextPoll
+	cdef public uint16_t __prevSpiCount
+
+	cdef ExBool_t __pixtendPoll(self, double now)
+	cdef __waitV2Transfer(self, _Bool waitForBegin)
+	cdef __syncPixtendPoll(self, _Bool waitForBegin)
+
+	cdef readInputs(self)
+	cdef writeOutputs(self)
+	cdef bytearray directReadInput(self, uint32_t accessWidth, uint32_t accessOffset)
+	cdef ExBool_t directWriteOutput(self, uint32_t accessWidth, uint32_t accessOffset, bytearray data) except ExBool_val

@@ -10,24 +10,29 @@ Reverse Engineering Physical Semantics of PLC Program Variables Using Control In
 	2). Revised the original debugging module (./awlsim/awlsimhw_debug) to support the PLC memory state acquisition and online attack detection. <br>
 	3). Supplemented an interface of PLC simulation (./awlsim/Elevator_300project.awlpro) to support the quick rebooting of the PLC execution. <br>
 	4). Revised original functions of Awlsim (such as the .awlsim/core/hardware.py) to define the data interface of ./awlsim/Process_mimic module. <br>
-
+		
+		```
 		cd ./awlsim
 		python awlsim-server Elevator_300project.awlpro
 		python awlsim-client -r RUN  
 		python awlsim-client -r Stop 
+		```
 
 2. Hardware PLC is developed based on the OpenOPC for Python Library Module. 
 
 	The interface of reading/writing PLC memory is defined as an Opc *class*. 
-
-		import ./hardware_interface/Opc
 		
+		```
+		import ./hardware_interface/Opc
+		```
+
 ## Construct the Gcode <br>
 Taking the PLC IL program as input, the developed parser generates the dependencies between input and output variables. <br>
 
+```
 	cd ./STL_Parser
 	python -m core.main
-
+```
 ## Construct the Gdata <br>
 
 With the historical SCADA data, the developed graph construction generates causalities between sensor readings and control commands. 
@@ -84,11 +89,37 @@ An integrated example for constructing the Gcross.
 # Defense for ARES 
 
 ## Detect semantic attacks <br>
+Note that the online detection relies on the detailed ICS devices/software information. 
+We show one use case of the developed attack detection for our [Elevator Control System (ECS)](https://dl.acm.org/doi/10.1145/3560905.3568521), based on the PLC-Twin. 
 
-1. offline detection.
-python ./data_segmentation/segmenting_utils.py
+1. Prepare the ICS detection environment. <br>
+	
+	1). Install Siemens WinCC software in ECS. <br>
+	2). Deploy a SCADA system, supporting the data logging. <br>
 
-2. online detection
+2. Prepare the detection execution environment. <br>
+	```
+	pip install -r requirements.txt
+	```
+3. Build the attack detection on PLC-Twin, including <br>
+
+	1). A setup interface (./detection/Elevator_300project.awlpro) <br>
+		```
+		python awlsim-server Elevator_300project.awlpro
+		```
+	2). A revised awlsimhw_debug module (./detection/awlsimhw_debug/main.py) <br>
+		```
+		will be loaded automatically
+		```
+	3). A data acquisition interface using opc (./detection/awlsimhw_debug/readOpc.py) <br>
+		```
+		will be loaded automatically
+		```
+	4). Other utilities for data reading and conversion (./detection/utilsConvert/utilsConvert.py) <br>
+		```
+		will be loaded automatically
+		```
+
 
 
 ## Respond to semantic attacks <br>

@@ -1,0 +1,18 @@
+from awlsim.common.cython_support cimport *
+from awlsim.core.cpu cimport *
+
+cdef class AwlSim(object):
+	cdef public S7CPU cpu
+	cdef public _Bool _fatalHwErrors
+	cdef public list __registeredHardware
+	cdef public uint32_t __registeredHardwareCount
+	cdef public _Bool __hwStartupRequired
+
+	cdef public int32_t _profileLevel
+	cdef public object __profileModule
+	cdef public object __pstatsModule
+	cdef public object __profiler
+
+	cpdef runCycle(self)
+	cdef __readHwInputs(self)
+	cdef __writeHwOutputs(self)
