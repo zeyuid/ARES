@@ -106,12 +106,12 @@ We showcase the deployment of designed attack detection in our [Elevator Control
 		python awlsim-client -r RUN  
 		python awlsim-client -r Stop 
 		
-	2). A revised awlsimhw_debug module (./detection/awlsimhw_debug/main.py) <br>
+	2). An attack detection (./detection/awlsimhw_debug/main.py) <br>
 		
 		The CUSUM based attack detection is deployed, which will be loaded automatically 
 		when start up the ".awlpro" project. 
 		
-	3). A data acquisition interface using opc (./detection/awlsimhw_debug/readOpc.py) <br>
+	3). A data acquisition interface based on OpenOPC (./detection/awlsimhw_debug/readOpc.py) <br>
 		
 		Collect sensor readings and control commands from the SCADA database using OPC UA 
 		protocol, which is achieved based on the "OpenOPC" python library. 
@@ -121,13 +121,31 @@ We showcase the deployment of designed attack detection in our [Elevator Control
 	4). Other utilities for data acquisition and conversion (./detection/utilsConvert/utilsConvert.py) <br>
 		
 		The data conversion between Awlsim and SCADA database is convert. 
-		This conversion will be automatically loaded when start up the ".awlpro" project. 
+		This conversion module will be automatically loaded when start up the ".awlpro" project. 
 
 
 ## Respond to semantic attacks <br>
 
-The exploitation of "Force" function for Siemens PLC and Rockwell PLC is coming soon!
+Once an attack is detected, the responding strategy will be automatically activated based on the compromised program variables and their corresponding expected values. 
 
+1. Localize the compromised program variables according to the cross-domain mappings between SCADA data and PLC program. <br>
+
+```
+Integrated in "./detection/awlsimhw_debug/main.py". 
+```
+
+2. Generate the expected values of the compromised program variables. <br>
+
+```
+Integrated in "./detection/awlsimhw_debug/main.py". 
+```
+
+3. Construct responding packets and send to the victim PLC. 
+
+```
+Achieved by exploiting the "Force" functions of industrial communication protocols. 
+```
+The exploitation of "Force" function for Siemens PLC and Rockwell PLC is coming later... 
 
 
 ## Legal and Ethical Considerations <br>
