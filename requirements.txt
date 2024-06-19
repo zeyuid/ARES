@@ -1,3 +1,4 @@
 OpenOPC
 adodbapi
 pywintypes
+scipy

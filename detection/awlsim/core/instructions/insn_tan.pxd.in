@@ -1,0 +1,6 @@
+from awlsim.common.cython_support cimport *
+from awlsim.core.instructions.main cimport *
+
+cdef class AwlInsn_TAN(AwlInsn):
+	cdef double __piHalf
+	cdef double __piHalfNeg

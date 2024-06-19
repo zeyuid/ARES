@@ -1,0 +1,27 @@
+from awlsim.common.cython_support cimport *
+from awlsim.core.cpu cimport *
+from awlsim.core.parenstack cimport *
+from awlsim.core.statusword cimport *
+from awlsim.core.operators cimport *
+
+cdef class AwlInsn(object):
+	cdef public S7CPU cpu
+	cdef public uint32_t insnType
+	cdef public object labelStr
+	cdef public object commentStr
+	cdef public object parentInfo
+	cdef public int32_t ip
+	cdef public list ops
+	cdef public uint32_t opCount
+	cdef public AwlOperator op0
+	cdef public AwlOperator op1
+	cdef public tuple params
+
+	cdef public uint32_t _widths_1
+	cdef public uint32_t _widths_8_16_32
+	cdef public uint32_t _widths_16
+	cdef public uint32_t _widths_32
+	cdef public uint32_t _widths_scalar
+	cdef public uint32_t _widths_all
+
+	cdef run(self)

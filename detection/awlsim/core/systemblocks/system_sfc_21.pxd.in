@@ -1,0 +1,7 @@
+from awlsim.common.cython_support cimport *
+from awlsim.core.systemblocks.systemblocks cimport *
+
+cdef class SFC21(SFC):
+	cdef public dict __typeWidths
+
+	cpdef run(self)

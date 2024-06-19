@@ -1,0 +1,139 @@
+ORGANIZATION_BLOCK OB 1
+BEGIN
+	// Test DB1.DT1 initial values
+	AUF DB 1
+	LAR1		P#DBX 0.0
+	L		B [AR1, P#0.0]
+	__ASSERT==	__ACCU 1,	B#16#91
+	L		B [AR1, P#1.0]
+	__ASSERT==	__ACCU 1,	B#16#02
+	L		B [AR1, P#2.0]
+	__ASSERT==	__ACCU 1,	B#16#03
+	L		B [AR1, P#3.0]
+	__ASSERT==	__ACCU 1,	B#16#04
+	L		B [AR1, P#4.0]
+	__ASSERT==	__ACCU 1,	B#16#05
+	L		B [AR1, P#5.0]
+	__ASSERT==	__ACCU 1,	B#16#06
+	L		B [AR1, P#6.0]
+	__ASSERT==	__ACCU 1,	B#16#78
+	L		B [AR1, P#7.0]
+	__ASSERT==	__ACCU 1,	B#16#91
+
+	// Test DB1.DT2 initial values
+	AUF DB 1
+	LAR1		P#DBX 8.0
+	L		B [AR1, P#0.0]
+	__ASSERT==	__ACCU 1,	B#16#10
+	L		B [AR1, P#1.0]
+	__ASSERT==	__ACCU 1,	B#16#11
+	L		B [AR1, P#2.0]
+	__ASSERT==	__ACCU 1,	B#16#12
+	L		B [AR1, P#3.0]
+	__ASSERT==	__ACCU 1,	B#16#13
+	L		B [AR1, P#4.0]
+	__ASSERT==	__ACCU 1,	B#16#14
+	L		B [AR1, P#5.0]
+	__ASSERT==	__ACCU 1,	B#16#15
+	L		B [AR1, P#6.0]
+	__ASSERT==	__ACCU 1,	B#16#16
+	L		B [AR1, P#7.0]
+	__ASSERT==	__ACCU 1,	B#16#06
+
+
+	// Test DATE immediates
+	L		D#1990-1-1
+	__ASSERT==	__ACCU 1,	0
+	L		DATE#1990-1-1
+	__ASSERT==	__ACCU 1,	0
+	L		D#2000-12-31
+	__ASSERT==	__ACCU 1,	4017
+	L		DATE#2000-12-31
+	__ASSERT==	__ACCU 1,	4017
+	L		D#2100-12-31
+	__ASSERT==	__ACCU 1,	L#40541
+	L		DATE#2100-12-31
+	__ASSERT==	__ACCU 1,	L#40541
+	L		D#2168-12-31
+	__ASSERT==	__ACCU 1,	L#65378
+	L		DATE#2168-12-31
+	__ASSERT==	__ACCU 1,	L#65378
+	// Test DB1.DATEx initial values
+	L		DB1.DBW 16
+	__ASSERT==	__ACCU 1,	4017
+	L		DB1.DBW 18
+	__ASSERT==	__ACCU 1,	L#40541
+
+
+	// Test TIME_OF_DAY immediates
+	L		TOD#0:0:0.0
+	__ASSERT==	__ACCU 1,	0
+	L		TIME_OF_DAY#0:0:0.0
+	__ASSERT==	__ACCU 1,	0
+	L		TOD#13:37:13.37
+	__ASSERT==	__ACCU 1,	L#49033370
+	L		TIME_OF_DAY#13:37:13.37
+	__ASSERT==	__ACCU 1,	L#49033370
+	L		TOD#23:59:59.999
+	__ASSERT==	__ACCU 1,	L#86399999
+	L		TIME_OF_DAY#23:59:59.999
+	__ASSERT==	__ACCU 1,	L#86399999
+	// Test DB1.TODx initial values
+	L		DB1.DBD 20
+	__ASSERT==	__ACCU 1,	L#86399999
+	L		DB1.DBD 24
+	__ASSERT==	__ACCU 1,	L#49033370
+
+
+	// Test TIME immediates
+	L		T#2d
+	__ASSERT==	__ACCU 1,	L#172800000
+	L		T#1s100ms
+	__ASSERT==	__ACCU 1,	1100
+	L		TIME#1s100ms
+	__ASSERT==	__ACCU 1,	1100
+	L		T#-1s100ms
+	__ASSERT==	__ACCU 1,	L#-1100
+	L		TIME#2s_400ms			// Underscore separators
+	__ASSERT==	__ACCU 1,	2400
+	L		TIME#__2_s__400__ms__		// Awlsim extension: arbitrary underscores
+	__ASSERT==	__ACCU 1,	2400
+
+
+	// Test S5T immediates
+	L		S5T#1H
+	__ASSERT==	__ACCU 1,	W#16#3360
+	L		S5T#2h
+	__ASSERT==	__ACCU 1,	W#16#3720
+	L		S5T#2M
+	__ASSERT==	__ACCU 1,	W#16#2120
+	L		S5T#3S
+	__ASSERT==	__ACCU 1,	W#16#0300
+	L		S5T#400MS
+	__ASSERT==	__ACCU 1,	W#16#0040
+	L		S5T#1H2M3S400MS
+	__ASSERT==	__ACCU 1,	W#16#3372
+	L		S5T#2M_3S_400MS			// Underscore separators
+	__ASSERT==	__ACCU 1,	W#16#2123
+	L		S5T#__1_M__2_S__100__MS__	// Awlsim extension: arbitrary underscores
+	__ASSERT==	__ACCU 1,	W#16#1621
+
+
+	CALL SFC 46 // STOP CPU
+END_ORGANIZATION_BLOCK
+
+
+DATA_BLOCK DB 1
+STRUCT
+	DT1	: DATE_AND_TIME := DT#1990-1-1-0:0:0.0;
+	DT2	: DATE_AND_TIME := DT#2010-11-12-13:14:15.16;
+	DATE1	: DATE := D#2100-12-31;
+	DATE2	: DATE := D#2100-12-31;
+	TOD1	: TIME_OF_DAY := TOD#13:37:13.37;
+	TOD2	: TIME_OF_DAY := TOD#13:37:13.37;
+END_STRUCT;
+BEGIN
+	DT1	:= DATE_AND_TIME#1991-2-3-4:5:6.789;
+	DATE1	:= D#2000-12-31;
+	TOD1	:= TOD#23:59:59.999;
+END_DATA_BLOCK

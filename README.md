@@ -86,39 +86,44 @@ An integrated example for constructing the Gcross.
 	mrun Mapping_Parameters_analysis_CENTOR.m 
 	```
 
-# Defense for ARES 
+# Defense to ARES 
 
 ## Detect semantic attacks <br>
-Note that the online detection relies on the detailed ICS devices/software information. 
-We show one use case of the developed attack detection for our [Elevator Control System (ECS)](https://dl.acm.org/doi/10.1145/3560905.3568521), based on the PLC-Twin. 
+The implementation of online detection relies on the detailed information of ICS devices/software. 
+We showcase the deployment of designed attack detection in our [Elevator Control System (ECS)](https://dl.acm.org/doi/10.1145/3560905.3568521), based on the PLC-Twin. 
 
 1. Prepare the ICS detection environment. <br>
 	
-	1). Install Siemens WinCC software in ECS. <br>
+	1). Install [Siemens WinCC](https://www.siemens.com/global/en/products/automation/industry-software/automation-software/scada/simatic-wincc-v8/simatic-wincc-v7-basic-software.html) software in ECS. <br>
 	2). Deploy a SCADA system, supporting the data logging. <br>
 
-2. Prepare the detection execution environment. <br>
+2. Prepare the required packets. <br> 
+
 	```
 	pip install -r requirements.txt
 	```
-3. Build the attack detection on PLC-Twin, including <br>
+
+3. Build the attack detection using PLC-Twin, including: <br>
 
 	1). A setup interface (./detection/Elevator_300project.awlpro) <br>
 		
 		python awlsim-server Elevator_300project.awlpro
+		python awlsim-client -r RUN  
+		python awlsim-client -r Stop 
 		
 	2). A revised awlsimhw_debug module (./detection/awlsimhw_debug/main.py) <br>
 		
-		will be loaded automatically
+		The CUSUM based attack detection is deployed, which will be loaded automatically when start up the ".awlpro" project. 
 		
 	3). A data acquisition interface using opc (./detection/awlsimhw_debug/readOpc.py) <br>
 		
-		will be loaded automatically
+		Collect sensor readings and control commands from the SCADA database using OPC UA protocol, which is achieved based on the "OpenOPC" python library. <br>
+		This data collection module will be automatically loaded when start up the ".awlpro" project. 
 		
-	4). Other utilities for data reading and conversion (./detection/utilsConvert/utilsConvert.py) <br>
+	4). Other utilities for data acquisition and conversion (./detection/utilsConvert/utilsConvert.py) <br>
 		
-		will be loaded automatically
-		
+		The data conversion between Awlsim and SCADA database is convert. <br>
+		This conversion will be automatically loaded when start up the ".awlpro" project. 
 
 
 ## Respond to semantic attacks <br>

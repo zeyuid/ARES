@@ -1,0 +1,19 @@
+from awlsim.common.cython_support cimport *
+from awlsim.core.blocks cimport *
+from awlsim.core.cpu cimport *
+
+cdef class SystemBlock(StaticCodeBlock):
+	cdef public S7CPU cpu
+	cdef public dict __interfaceOpers
+	cdef public uint32_t __widthMaskAll
+
+	cdef AwlMemoryObject fetchInterfaceFieldByName(self, object name) except NULL
+	cdef storeInterfaceFieldByName(self, object name, AwlMemoryObject value)
+
+	cpdef run(self)
+
+cdef class SFB(SystemBlock):
+	pass
+
+cdef class SFC(SystemBlock):
+	pass

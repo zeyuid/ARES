@@ -1,0 +1,64 @@
+from awlsim.common.cython_support cimport *
+from awlsim.core.main cimport *
+
+#from posix.select cimport fd_set	#@cy-posix
+
+#cdef extern from "<sched.h>":		#@cy-posix
+#	int sched_yield() nogil		#@cy-posix
+
+cdef class AwlSimServer(object):
+	cdef public double __initTimeStamp
+	cdef public double __startupTimeStamp
+	cdef public AwlSim __sim
+	cdef public frozenset __affinitySetCore
+	cdef public frozenset __affinitySetPeripheral
+	cdef public _Bool __rtSchedEnabled
+	cdef public object __os_sched_yield
+	cdef public _Bool __gcManual
+	cdef public uint16_t __gcTriggerCounter
+	cdef public uint16_t __gcTriggerThreshold
+	cdef public int32_t __gcGen0Threshold
+	cdef public int32_t __gcGen1Threshold
+	cdef public int32_t __gcGen2Threshold
+	cdef public object __gc_collect
+	cdef public object __gc_get_count
+	cdef public list __emptyList
+	cdef public _Bool __startupDone
+	cdef public int32_t __state
+	cdef public _Bool __running
+	cdef public _Bool __needOB10x
+	cdef public double __nextStats
+	cdef public uint32_t __commandMask
+	cdef public _Bool __raiseExceptionsFromRun
+	cdef public _Bool __handleMaintenanceServerside
+	cdef public _Bool __haveAnyMemReadReq
+	cdef public object memReadRequestMsg
+	cdef public uint32_t __insnSerial
+
+	cdef public object __projectFile
+	cdef public _Bool __projectWriteBack
+	cdef public object __projectToBeLoaded
+
+	cdef public object __socket
+#	cdef public int __socketFileno	#@cy-posix
+	cdef public object __unixSockPath
+	cdef public dict __sock2client
+	cdef public list __clients
+	cdef public list __selectRlist
+#	cdef fd_set __select_fdset	#@cy-posix
+#	cdef int __select_fdset_size	#@cy-posix
+
+	cdef public object awlSourceContainer
+	cdef public object fupSourceContainer
+	cdef public object symTabSourceContainer
+	cdef public object loadedHwModules
+	cdef public object loadedLibSelections
+
+	cdef public object __cycleExitHook
+	cdef public object __cycleExitHookData
+
+	cdef __handleClientComm(self, client)
+	cdef __handleSocketComm(self, list sockList)
+#	cdef __handleCommunicationPosix(self) #@cy-posix
+
+	cdef void __yieldHostCPU(self)

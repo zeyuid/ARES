@@ -1,0 +1,121 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+#
+# AWL simulator - Project file upgrade utility
+#
+# Copyright 2017-2020 Michael Buesch <m@bues.ch>
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+#
+
+from __future__ import division, absolute_import, print_function, unicode_literals
+
+import sys
+import os
+import getopt
+
+from awlsim_loader.common import *
+from awlsim.gui.util import *
+from awlsim.gui.fup.fupwidget import FupFactory, FupWidget
+
+
+def usage():
+	print("awlsim-proupgrade version %s" % VERSION_STRING)
+	print("")
+	print("This utility re-writes a project file using the latest file format version.")
+	print("")
+	print("Usage: awlsim-proupgrade [OPTIONS] PROJECTFILE.awlpro ...")
+	print("")
+	print("Options:")
+	print(" -u|--gen-uuids               Regenerate all UUIDs.")
+	print(" -L|--loglevel LVL            Set the client log level:")
+	print("                              0: Log nothing")
+	print("                              1: Log errors")
+	print("                              2: Log errors and warnings (default)")
+	print("                              3: Log errors, warnings and info messages")
+	print("                              4: Verbose logging")
+	print("                              5: Extremely verbose logging")
+
+def main():
+	opt_genUUIDs = False
+	opt_loglevel = Logging.LOG_WARNING
+
+	Logging.setPrefix("awlsim-proupgrade: ")
+
+	try:
+		(opts, args) = getopt.getopt(sys.argv[1:],
+			"huL:",
+			[ "help", "gen-uuids", "loglevel=", ])
+	except getopt.GetoptError as e:
+		printError(str(e))
+		usage()
+		return ExitCodes.EXIT_ERR_CMDLINE
+	for (o, v) in opts:
+		if o in ("-h", "--help"):
+			usage()
+			return ExitCodes.EXIT_OK
+		if o in ("-u", "--gen-uuids"):
+			opt_genUUIDs = True
+		if o in ("-L", "--loglevel"):
+			try:
+				opt_loglevel = int(v)
+			except ValueError:
+				printError("-L|--loglevel: Invalid log level")
+				sys.exit(1)
+	if len(args) < 1:
+		usage()
+		return ExitCodes.EXIT_ERR_CMDLINE
+	projectFiles = args
+
+	try:
+		Logging.setLoglevel(opt_loglevel)
+
+		for projectFile in projectFiles:
+			# Parse the project file and write it back immediately.
+			# The read will parse old formats, too.
+			# The write will write using the latest format.
+			printInfo("Upgrading file format of: %s" % projectFile)
+
+			project = Project.fromFile(projectFile)
+
+			for fupSource in project.getFupSources():
+				fupWidget = FupWidget(None, None)
+				factory = FupFactory(fupWidget=fupWidget)
+				factory.parse(fupSource.sourceBytes)
+				if opt_genUUIDs:
+					# Re-generate all UUIDs.
+					fupWidget.regenAllUUIDs()
+				fupSource.sourceBytes = factory.compose()
+
+			for kopSource in project.getKopSources():
+				pass#TODO
+
+			project.toFile()
+
+	except AwlSimError as e:
+		printError(e.getReport())
+		return ExitCodes.EXIT_ERR_SIM
+
+	return ExitCodes.EXIT_OK
+
+if __name__ == "__main__":
+	qtArgv = list(sys.argv)
+	if osIsPosix and not os.environ.get("DISPLAY"):
+		# The X server is not running.
+		# Smuggle the offscreen option into Qt argv.
+		qtArgv.insert(1, "-platform")
+		qtArgv.insert(2, "offscreen")
+	qapp = QApplication(qtArgv)
+	sys.exit(main())

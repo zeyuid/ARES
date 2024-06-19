@@ -1,0 +1,33 @@
+from awlsim.common.cython_support cimport *
+from awlsim.core.memory cimport *
+from awlsim.core.offset cimport *
+
+cdef class AwlStructField(object):
+	cdef public object name
+	cdef public AwlOffset offset
+	cdef public object dataType
+	cdef public object initBytes
+	cdef public AwlStructField override
+	cdef public AwlStructField finalOverride
+	cdef public uint32_t bitSize
+	cdef public uint32_t byteSize
+	cdef public _Bool compound
+	cdef public _Bool callByRef
+
+	cdef __eq(self, other)
+
+cdef class AwlStruct(object):
+	cdef public list fields
+	cdef public dict name2field
+
+	cdef __eq(self, other)
+
+cdef class AwlStructInstance(object):
+	cdef public AwlStruct _struct
+	cdef public AwlMemory memory
+
+	cdef AwlMemoryObject getFieldData(self, AwlStructField field, AwlOffset baseOffset) except NULL
+	cdef setFieldData(self, AwlStructField field, AwlMemoryObject memObj, AwlOffset baseOffset)
+
+	cdef AwlMemoryObject getFieldDataByName(self, object name) except NULL
+	cdef setFieldDataByName(self, object name, AwlMemoryObject memObj)

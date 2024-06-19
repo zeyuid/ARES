@@ -1,0 +1,254 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+#
+# AWL simulator - Client interface
+#
+# Copyright 2013-2019 Michael Buesch <m@bues.ch>
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+#
+
+from __future__ import division, absolute_import, print_function, unicode_literals
+
+import sys
+import getopt
+
+from awlsim_loader.common import *
+from awlsim_loader.coreclient import *
+
+
+def printCpuStats(cpuStatsMsg):
+	if not cpuStatsMsg:
+		print("Failed to fetch CPU statistics.")
+		return
+
+	if cpuStatsMsg.insnPerSecond > 0.0:
+		insnPerSecondStr = floatToHumanReadable(cpuStatsMsg.insnPerSecond)
+		usPerInsnStr = "%.03f" % ((1.0 / cpuStatsMsg.insnPerSecond) * 1000000.0)
+	else:
+		insnPerSecondStr = "-/-"
+		usPerInsnStr = "-/-"
+
+	if (cpuStatsMsg.avgCycleTime <= 0.0 or
+	    cpuStatsMsg.minCycleTime <= 0.0 or
+	    cpuStatsMsg.maxCycleTime <= 0.0):
+		avgCycleTimeStr = minCycleTimeStr = maxCycleTimeStr = "-/-"
+	else:
+		avgCycleTimeStr = "%.03f" % (cpuStatsMsg.avgCycleTime * 1000.0)
+		minCycleTimeStr = "%.03f" % (cpuStatsMsg.minCycleTime * 1000.0)
+		maxCycleTimeStr = "%.03f" % (cpuStatsMsg.maxCycleTime * 1000.0)
+
+	if cpuStatsMsg.running:
+		print("CPU RUN %.01f s (system uptime %.01f s)" % (
+		      cpuStatsMsg.runtime, cpuStatsMsg.uptime))
+	else:
+		print("CPU STOP (system uptime %.01f s)" % (
+		      cpuStatsMsg.uptime))
+	print("    OB1:  avg: %s ms  min: %s ms  max: %s ms" % (
+	      avgCycleTimeStr, minCycleTimeStr, maxCycleTimeStr))
+	print("  Speed:  %s stmt/s (= %s us/stmt)  %.01f stmt/cycle" % (
+	      insnPerSecondStr, usPerInsnStr, cpuStatsMsg.insnPerCycle))
+
+class TextInterfaceAwlSimClient(AwlSimClient):
+	pass
+
+def usage():
+	print("awlsim-client version %s" % VERSION_STRING)
+	print("")
+	print("Usage: awlsim-client [OPTIONS] <ACTIONS>")
+	print("")
+	print("Options:")
+	print(" -c|--connect HOST[:PORT]     Connect to the server at HOST:PORT")
+	print("                              Defaults to %s:%d" % (
+	      AwlSimServer.DEFAULT_HOST, AwlSimServer.DEFAULT_PORT))
+	print(" -t|--timeout 10.0            Set the connection timeout (default 10 s)")
+	print(" -L|--loglevel LVL            Set the client log level:")
+	print("                              0: Log nothing")
+	print("                              1: Log errors")
+	print("                              2: Log errors and warnings (default)")
+	print("                              3: Log errors, warnings and info messages")
+	print("                              4: Verbose logging")
+	print("                              5: Extremely verbose logging")
+	print("")
+	print(" -s|--ssh-tunnel              Establish the connection via SSH tunnel.")
+	print(" -P|--ssh-passphrase XYZ      Use XYZ as SSH passphrase.")
+	print("                              Default: Ask user.")
+	print(" --ssh-user %s                SSH user. Default: %s" % (
+	      SSHTunnel.SSH_DEFAULT_USER, SSHTunnel.SSH_DEFAULT_USER))
+	print(" --ssh-port %s                SSH port. Default: %s" % (
+	      SSHTunnel.SSH_PORT, SSHTunnel.SSH_PORT))
+	print(" --ssh-localport auto         SSH localport number or 'auto'.")
+	print(" --ssh-exe %s                SSH client executable path. Default: %s" % (
+	      SSHTunnel.SSH_DEFAULT_EXECUTABLE, SSHTunnel.SSH_DEFAULT_EXECUTABLE))
+	print("")
+	print("Actions to be performed on the server:")
+	print(" -r|--runstate RUN/STOP       Set the run state of the CPU.")
+	print(" -S|--stats                   Fetch and display CPU statistics.")
+	print(" --meas-start                 Start instruction time measurements.")
+	print(" --meas-stop                  Stop instruction time measurements.")
+	print(" --shutdown                   Shutdown the core server system.")
+	print(" --reboot                     Reboot the core server system.")
+
+def main():
+	opt_connect = (AwlSimServer.DEFAULT_HOST, AwlSimServer.DEFAULT_PORT)
+	opt_timeout = 10.0
+	opt_loglevel = Logging.LOG_WARNING
+	opt_sshTunnel = False
+	opt_sshPassphrase = None
+	opt_sshUser = SSHTunnel.SSH_DEFAULT_USER
+	opt_sshPort = SSHTunnel.SSH_PORT
+	opt_sshLocalPort = None
+	opt_sshExe = SSHTunnel.SSH_DEFAULT_EXECUTABLE
+	actions = []
+
+	try:
+		(opts, args) = getopt.getopt(sys.argv[1:],
+			"hc:t:L:sP:r:S",
+			[ "help", "connect=", "timeout=", "loglevel=",
+			  "ssh-tunnel", "ssh-passphrase=", "ssh-user=", "ssh-port=", "ssh-localport=", "ssh-exe=",
+			  "runstate=", "stats", "meas-start", "meas-stop", "shutdown", "reboot", ])
+	except getopt.GetoptError as e:
+		printError(str(e))
+		usage()
+		return ExitCodes.EXIT_ERR_CMDLINE
+	for (o, v) in opts:
+		if o in ("-h", "--help"):
+			usage()
+			return ExitCodes.EXIT_OK
+		if o in ("-c", "--connect"):
+			try:
+				host, port = parseNetAddress(v)
+				if port is None:
+					port = AwlSimServer.DEFAULT_PORT
+				opt_connect = (host, port)
+			except AwlSimError as e:
+				printError("-c|--connect: %s" % e.message)
+				sys.exit(1)
+		if o in ("-t", "--timeout"):
+			try:
+				opt_timeout = float(v)
+			except ValueError:
+				printError("-t|--timeout: Invalid timeout value")
+				sys.exit(1)
+		if o in ("-L", "--loglevel"):
+			try:
+				opt_loglevel = int(v)
+			except ValueError:
+				printError("-L|--loglevel: Invalid log level")
+				sys.exit(1)
+		if o in ("-s", "--ssh-tunnel"):
+			opt_sshTunnel = True
+		if o in ("-P", "--ssh-passphrase"):
+			opt_sshPassphrase = v
+		if o == "--ssh-user":
+			opt_sshUser = v
+		if o == "--ssh-port":
+			try:
+				opt_sshPort = int(v)
+			except ValueError:
+				printError("--ssh-port: Invalid port number")
+				sys.exit(1)
+		if o == "--ssh-localport":
+			try:
+				if v.lower().strip() == "auto":
+					opt_sshLocalPort = None
+				else:
+					opt_sshLocalPort = int(v)
+			except ValueError:
+				printError("--ssh-localport: Invalid port number")
+				sys.exit(1)
+		if o == "--ssh-exe":
+			opt_sshExe = v
+		if o in ("-r", "--runstate"):
+			if v.upper().strip() in ("RUN", "1", "START"):
+				actions.append(("runstate", True))
+			elif v.upper().strip() in ("STOP", "0"):
+				actions.append(("runstate", False))
+			else:
+				printError("-r|--runstate: Invalid run state")
+				sys.exit(1)
+		if o in ("-S", "--stats"):
+			actions.append(("stats", None))
+		if o == "--meas-start":
+			actions.append(("meas-start", None))
+		if o == "--meas-stop":
+			actions.append(("meas-stop", None))
+		if o == "--shutdown":
+			actions.append(("shutdown", None))
+		if o == "--reboot":
+			actions.append(("reboot", None))
+	if args:
+		usage()
+		return ExitCodes.EXIT_ERR_CMDLINE
+	if not actions:
+		usage()
+		return ExitCodes.EXIT_ERR_CMDLINE
+
+	client = None
+	try:
+		Logging.setLoglevel(opt_loglevel)
+
+		host, port = opt_connect
+
+		if opt_sshTunnel:
+			printInfo("Establishing SSH tunnel...")
+			tunnel = SSHTunnel(
+				remoteHost=host,
+				remotePort=port,
+				localPort=opt_sshLocalPort,
+				sshUser=opt_sshUser,
+				sshPort=opt_sshPort,
+				sshExecutable=opt_sshExe,
+				sshPassphrase=opt_sshPassphrase
+			)
+			host, port = tunnel.connect()
+
+		client = TextInterfaceAwlSimClient()
+		client.connectToServer(host=host,
+				       port=port,
+				       timeout=opt_timeout)
+
+		for action, actionValue in actions:
+			if action == "runstate":
+				client.setRunState(actionValue)
+			elif action == "stats":
+				printCpuStats(client.getCpuStats(sync=True))
+			elif action == "meas-start":
+				if not client.measStart():
+					printError("Failed to start measurements.")
+			elif action == "meas-stop":
+				reportData = client.measStop()
+				if reportData:
+					sys.stdout.write(reportData)
+					sys.stdout.flush()
+				else:
+					printError("Measurement failed. No data.")
+			elif action == "shutdown":
+				client.shutdownCoreServerSystem()
+			elif action == "reboot":
+				client.rebootCoreServerSystem()
+			else:
+				assert(0)
+	except AwlSimError as e:
+		printError(e.getReport())
+		return ExitCodes.EXIT_ERR_SIM
+	finally:
+		if client:
+			client.shutdown()
+
+	return ExitCodes.EXIT_OK
+
+if __name__ == "__main__":
+	sys.exit(main())
