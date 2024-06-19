@@ -1,5 +1,5 @@
 # ARES
-Reverse Engineering Physical Semantics of PLC Program Variables Using Control Invariants
+Unveiling Physical Semantics of PLC Variables Using Control Invariants 
 
 
 ## Prepare the PLC-Twin
@@ -22,14 +22,14 @@ Reverse Engineering Physical Semantics of PLC Program Variables Using Control In
 		
 		import ./hardware_interface/Opc
 
-## Construct the Gcode <br>
+## Construct Gcode <br>
 Taking the PLC IL program as input, the developed parser generates the dependencies between input and output variables. <br>
 
 ```
 cd ./STL_Parser
 python -m core.main
 ```
-## Construct the Gdata <br>
+## Construct Gdata <br>
 
 With the historical SCADA data, the developed graph construction generates causalities between sensor readings and control commands. 
 
@@ -50,7 +50,7 @@ The construction of Gdata consists of two basic modules. Specifically, <br>
 	```
 
 
-## Construct the Gcross <br>
+## Construct Gcross <br>
 
 With the identified Gcode and Gdata as inputs, the developed matching algorithm enumerates and validates all the feasible one-to-one mapping between PLC program variables and SCADA data variables. 
 
@@ -140,7 +140,7 @@ Integrated in "./detection/awlsimhw_debug/main.py".
 Integrated in "./detection/awlsimhw_debug/main.py". 
 ```
 
-3. Construct responding packets and send to the victim PLC. 
+3. Construct the responding packets and send them to the victim PLC. 
 
 ```
 Achieved by exploiting the "Force" functions of industrial communication protocols. 
