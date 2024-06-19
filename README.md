@@ -11,20 +11,16 @@ Reverse Engineering Physical Semantics of PLC Program Variables Using Control In
 	3). Supplemented an interface of PLC simulation (./awlsim/Elevator_300project.awlpro) to support the quick rebooting of the PLC execution. <br>
 	4). Revised original functions of Awlsim (such as the .awlsim/core/hardware.py) to define the data interface of ./awlsim/Process_mimic module. <br>
 		
-		```
 		cd ./awlsim
 		python awlsim-server Elevator_300project.awlpro
 		python awlsim-client -r RUN  
 		python awlsim-client -r Stop 
-		```
 
 2. Hardware PLC is developed based on the OpenOPC for Python Library Module. 
 
 	The interface of reading/writing PLC memory is defined as an Opc *class*. 
 		
-		```
 		import ./hardware_interface/Opc
-		```
 
 ## Construct the Gcode <br>
 Taking the PLC IL program as input, the developed parser generates the dependencies between input and output variables. <br>
@@ -64,7 +60,7 @@ The construction of Gcross has two essential modules.
 	```
 	[Mappings, ~, ~] = Graph_mapping(G_code, G_data, data_for_mapping, redundant_id, constant_id, mapping_threshold, mapping_greedy, savefilepath );
 
-	%%% exemplary parameters %%%
+	% exemplary parameters 
 	mapping_threshold = 0.95 ;
 	mapping_greedy = 1 ;
 	savefilepath = "./data/Graphs/Graphs_length7000_occup1_info_1.000000e-01/mapping_results"; 
@@ -81,10 +77,9 @@ The construction of Gcross has two essential modules.
 
 An integrated example for constructing the Gcross. 
 
-	```
 	cd ./ares
 	mrun Mapping_Parameters_analysis_CENTOR.m 
-	```
+
 
 # Defense to ARES 
 
