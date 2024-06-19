@@ -26,8 +26,8 @@ Reverse Engineering Physical Semantics of PLC Program Variables Using Control In
 Taking the PLC IL program as input, the developed parser generates the dependencies between input and output variables. <br>
 
 ```
-	cd ./STL_Parser
-	python -m core.main
+cd ./STL_Parser
+python -m core.main
 ```
 ## Construct the Gdata <br>
 
@@ -108,16 +108,19 @@ We showcase the deployment of designed attack detection in our [Elevator Control
 		
 	2). A revised awlsimhw_debug module (./detection/awlsimhw_debug/main.py) <br>
 		
-		The CUSUM based attack detection is deployed, which will be loaded automatically when start up the ".awlpro" project. 
+		The CUSUM based attack detection is deployed, which will be loaded automatically 
+		when start up the ".awlpro" project. 
 		
 	3). A data acquisition interface using opc (./detection/awlsimhw_debug/readOpc.py) <br>
 		
-		Collect sensor readings and control commands from the SCADA database using OPC UA protocol, which is achieved based on the "OpenOPC" python library. <br>
-		This data collection module will be automatically loaded when start up the ".awlpro" project. 
+		Collect sensor readings and control commands from the SCADA database using OPC UA 
+		protocol, which is achieved based on the "OpenOPC" python library. 
+		This data collection module will be automatically loaded when start up the ".awlpro" 
+		project. 
 		
 	4). Other utilities for data acquisition and conversion (./detection/utilsConvert/utilsConvert.py) <br>
 		
-		The data conversion between Awlsim and SCADA database is convert. <br>
+		The data conversion between Awlsim and SCADA database is convert. 
 		This conversion will be automatically loaded when start up the ".awlpro" project. 
 
 
