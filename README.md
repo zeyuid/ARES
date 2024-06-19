@@ -150,5 +150,5 @@ The exploitation of "Force" function for Siemens PLC and Rockwell PLC is coming 
 
 ## Legal and Ethical Considerations <br>
 
-The response to semantic attacks makes use of the "Force" function of the industrial communication protocols. However, the "Force" function may also be utilized by adversaries, threatening the real industrial control systems. For the legal and ethical considerations, the exploitation of "Force" function will be published when the authentication weakness of protocols is fixed. 
+The response to semantic attacks is based on the "Force" function of the industrial communication protocols. However, the "Force" function may also be utilized by adversaries, threatening the real industrial control systems. For the legal and ethical considerations, the exploitation of "Force" function will be published when the authentication weakness of protocols is fixed. 
 
