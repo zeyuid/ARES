@@ -1,2 +1,0 @@
-def machine():
-	return "unknown"
