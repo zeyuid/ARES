@@ -151,3 +151,19 @@ The exploitation of "Force" function for Siemens PLC and Rockwell PLC is coming 
 ## Legal and Ethical Considerations <br>
 
 The response to semantic attacks is built based on the "Force" function of the industrial communication protocols. However, the "Force" function may also be utilized by adversaries, threatening the real industrial control systems. For legal and ethical considerations, the exploitation of the "Force" function will be published when the authentication weakness of protocols is fixed. 
+
+
+
+## Cite
+If you use PLCSage for your research, please cite [Unveiling Physical Semantics of PLC Variables Using Control Invariants](https://ieeexplore.ieee.org/document/10616045).
+
+```
+bibtex
+@article{yang2024Unveiling,
+  title={Unveiling Physical Semantics of PLC Variables Using Control Invariants},
+  author={Yang, Zeyu and He, Liang and Ruan, Yucheng and Cheng, Peng and Chen, Jiming},
+  journal={IEEE Transactions on Dependable and Secure Computing},
+  year={2024},
+  publisher={IEEE}
+}
+```
